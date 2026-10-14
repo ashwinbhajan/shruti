@@ -8,6 +8,7 @@
 <meta name="supported-color-schemes" content="light">
 <!-- ATS Resume Builder Version: 1.0.0 (2026-02-15) -->
 <title>ATS Resume Builder - Shruti Dhamde</title>
+<script defer src="assets/pdf-lib.min.js"></script>
 
 <style>
 .local-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
@@ -831,6 +832,7 @@ body.sidebar-collapsed .sidebar-reopen-tab {
   <div class="logo">ATS<span>Resume</span> <span style="font-size:11px;font-weight:400;color:#90cdf4;margin-left:6px;">v1.0.0</span></div>
   <div class="separator"></div>
   <div class="local-actions">
+    <button class="btn btn-primary" type="button" data-action="download-ats-pdf">Download PDF</button>
     <button class="btn btn-primary" type="button" data-action="download-ats-text">Download ATS text</button>
     <button class="btn btn-success" type="button" data-action="save-local-backup">Save editable backup</button>
     <button class="btn btn-outline" type="button" data-action="load-local-backup">Load backup</button>
@@ -1174,6 +1176,10 @@ function initDelegatedHandlers() {
       }
       if (action === 'download-ats-text') {
         downloadAtsText();
+        return;
+      }
+      if (action === 'download-ats-pdf') {
+        downloadAtsPdf();
         return;
       }
       if (action === 'save-local-backup') {
@@ -3287,5 +3293,6 @@ function showToast(msg, type = '') {
   }, 5000);
 }
 </script>
+<script src="assets/pdf-export.js"></script>
 </body>
 </html>
