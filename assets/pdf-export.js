@@ -41,7 +41,7 @@
     return lines;
   }
 
-  async function buildAtsPdfBytes(data, PDFLib) {
+  async function buildAtsPdfBytes(data, PDFLib, options = {}) {
     const { PDFDocument, StandardFonts, rgb } = PDFLib;
     const pdf = await PDFDocument.create();
     pdf.setTitle(asciiSafe(data.header.name || 'Resume'));
@@ -55,6 +55,13 @@
     let page = pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
     let y = PAGE_HEIGHT - MARGIN;
     const width = PAGE_WIDTH - 2 * MARGIN;
+    let photo = null;
+    if (options.includePhoto && options.photoDataUrl) {
+      const match = /^data:image\/(png|jpe?g);base64,([A-Za-z0-9+/=]+)$/i.exec(options.photoDataUrl);
+      if (!match) throw new Error('Profile photo must be a PNG or JPEG image');
+      const bytes = Uint8Array.from(atob(match[2]), character => character.charCodeAt(0));
+      photo = match[1].toLowerCase() === 'png' ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
+    }
 
     function ensure(height) {
       if (y - height < MARGIN) {
@@ -90,9 +97,29 @@
       y -= 2;
     }
 
-    paragraph(data.header.name, bold, 21, ink, 0, 24);
-    paragraph(data.header.title, bold, 12.5, blue, 0, 16);
-    for (const contact of data.header.contact || []) paragraph(contact, normal, 9.5, gray, 0, 12);
+    const headerIndent = photo ? 110 : 0;
+    if (photo) {
+      const square = 92;
+      const top = PAGE_HEIGHT - MARGIN;
+      const scale = Math.min(square / photo.width, square / photo.height);
+      const photoWidth = photo.width * scale;
+      const photoHeight = photo.height * scale;
+      if (options.photoShape === 'circle') {
+        page.drawEllipse({ x: MARGIN + square / 2, y: top - square / 2,
+          xScale: square / 2, yScale: square / 2,
+          borderColor: gray, borderWidth: 0.6 });
+      } else {
+        page.drawRectangle({ x: MARGIN, y: top - square, width: square, height: square,
+          borderColor: gray, borderWidth: 0.6 });
+      }
+      page.drawImage(photo, { x: MARGIN + (square - photoWidth) / 2,
+        y: top - square + (square - photoHeight) / 2,
+        width: photoWidth, height: photoHeight });
+    }
+    paragraph(data.header.name, bold, 21, ink, headerIndent, 24);
+    paragraph(data.header.title, bold, 12.5, blue, headerIndent, 16);
+    for (const contact of data.header.contact || []) paragraph(contact, normal, 9.5, gray, headerIndent, 12);
+    if (photo) y = Math.min(y, PAGE_HEIGHT - MARGIN - 100);
     y -= 4;
     page.drawLine({ start: { x: MARGIN, y }, end: { x: PAGE_WIDTH - MARGIN, y }, thickness: 1.1, color: ink });
     y -= 6;
@@ -126,7 +153,27 @@
     return pdf.save({ useObjectStreams: false });
   }
 
-  async function downloadAtsPdf() {
+  async function prepareProfilePhoto(dataUrl, shape) {
+    if (!dataUrl || shape !== 'circle') return dataUrl;
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 256;
+        const context = canvas.getContext('2d');
+        context.beginPath();
+        context.arc(128, 128, 128, 0, Math.PI * 2);
+        context.clip();
+        context.drawImage(image, 0, 0, 256, 256);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      image.onerror = () => reject(new Error('Profile photo could not be read'));
+      image.src = dataUrl;
+    });
+  }
+
+  async function downloadAtsPdf(options = {}) {
     if (!root.PDFLib) {
       root.showToast('PDF library did not load. Use your browser Print > Save as PDF.');
       return;
@@ -138,9 +185,15 @@
       if (/[^\x0A\x20-\x7E]/.test(content.normalize('NFKD').replace(/[\u0300-\u036f]/g, ''))) {
         root.showToast('Some special characters may change in PDF. Review the downloaded file.');
       }
-      const bytes = await buildAtsPdfBytes(data, root.PDFLib);
-      root.downloadLocalFile(root.getExportFilename(), bytes, 'application/pdf');
-      root.showToast('Text-based PDF downloaded.', 'success');
+      const includePhoto = options.includePhoto !== false;
+      const photoShape = root.document.getElementById('photoBox').classList.contains('circle-photo') ? 'circle' : 'square';
+      const photoDataUrl = includePhoto ? await prepareProfilePhoto(root.getStoredPhoto(), photoShape) : '';
+      const bytes = await buildAtsPdfBytes(data, root.PDFLib, { includePhoto, photoDataUrl, photoShape });
+      const filename = includePhoto ? root.getExportFilename() :
+        root.getExportFilename().replace(/\.pdf$/i, '_ATS.pdf');
+      root.downloadLocalFile(filename, bytes, 'application/pdf');
+      root.showToast(includePhoto && photoDataUrl ? 'PDF downloaded with profile photo.' :
+        (includePhoto ? 'PDF downloaded.' : 'ATS PDF downloaded without photo.'), 'success');
     } catch (error) {
       root.showToast('PDF export failed: ' + error.message);
     }
