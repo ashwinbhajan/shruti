@@ -832,7 +832,8 @@ body.sidebar-collapsed .sidebar-reopen-tab {
   <div class="logo">ATS<span>Resume</span> <span style="font-size:11px;font-weight:400;color:#90cdf4;margin-left:6px;">v1.0.0</span></div>
   <div class="separator"></div>
   <div class="local-actions">
-    <button class="btn btn-primary" type="button" data-action="download-ats-pdf">Download PDF</button>
+    <button class="btn btn-primary" type="button" data-action="download-pdf" title="Includes an uploaded profile photo">Download PDF</button>
+    <button class="btn btn-outline" type="button" data-action="download-ats-pdf" title="Text-only PDF without the profile photo">Download ATS PDF</button>
     <button class="btn btn-primary" type="button" data-action="download-ats-text">Download ATS text</button>
     <button class="btn btn-success" type="button" data-action="save-local-backup">Save editable backup</button>
     <button class="btn btn-outline" type="button" data-action="load-local-backup">Load backup</button>
@@ -920,7 +921,7 @@ body.sidebar-collapsed .sidebar-reopen-tab {
       <p style="margin-bottom:5px">Calibri font (ATS safe)</p>
       <p style="margin-bottom:5px">Standard section headings</p>
       <p style="margin-bottom:5px">Check the downloaded text for reading order</p>
-      <p style="margin-bottom:5px">Photo is excluded from the ATS text</p>
+      <p style="margin-bottom:5px">Regular PDF includes your uploaded photo; ATS PDF and text omit it</p>
       <p style="margin-bottom:5px">Consistent date format</p>
       <p style="margin-bottom:5px">Standard bullet points</p>
       <p style="margin-bottom:5px; color:var(--accent); font-weight:600;">No universal ATS score exists. Follow the employer's accepted file types.</p>
@@ -1178,8 +1179,12 @@ function initDelegatedHandlers() {
         downloadAtsText();
         return;
       }
+      if (action === 'download-pdf') {
+        downloadAtsPdf({ includePhoto: true });
+        return;
+      }
       if (action === 'download-ats-pdf') {
-        downloadAtsPdf();
+        downloadAtsPdf({ includePhoto: false });
         return;
       }
       if (action === 'save-local-backup') {
