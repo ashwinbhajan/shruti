@@ -1,0 +1,3291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="supported-color-schemes" content="light">
+<!-- ATS Resume Builder Version: 1.0.0 (2026-02-15) -->
+<title>ATS Resume Builder - Shruti Dhamde</title>
+
+<style>
+.local-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.ats-report { position:fixed; z-index:1200; top:64px; right:20px; width:min(430px,calc(100vw - 40px));
+  max-height:70vh; overflow:auto; padding:18px 20px; background:#fff; color:#1a2744;
+  border:1px solid #cbd5e0; border-radius:8px; box-shadow:0 12px 36px #1a27443d; }
+.ats-report[hidden] { display:none; }
+.ats-report h3 { margin:0 0 10px; font-size:16px; }
+.ats-report p,.ats-report li { font-size:13px; line-height:1.45; }
+.ats-report ul { padding-left:18px; margin:10px 0; }
+.ats-report button { margin-top:8px; padding:6px 12px; border:0; border-radius:4px;
+  color:#fff; background:#2b6cb0; cursor:pointer; }
+.drag-handle-section,.ctrl-drag { display:none !important; }
+:root {
+  --primary: #1a2744;
+  --accent: #2b6cb0;
+  --accent-light: #ebf4ff;
+  --text: #2d3748;
+  --text-light: #718096;
+  --border: #e2e8f0;
+  --bg: #ffffff;
+  --edit-bg: #fffbeb;
+  --edit-border: #f6ad55;
+  --success: #48bb78;
+  --danger: #e53e3e;
+  --danger-light: #fed7d7;
+  --toolbar-bg: #1a2744;
+  --sidebar-width: 280px;
+  --font-body: 'Calibri', 'Helvetica Neue', Arial, sans-serif;
+  --page-width: 794px;
+}
+
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #edf2f7;
+  color: var(--text);
+  line-height: 1.15;
+  font-size: 11.5pt;
+}
+
+/* ============ TOP TOOLBAR ============ */
+.top-bar {
+  position: sticky; top: 0; z-index: 1000;
+  background: var(--toolbar-bg); padding: 10px 24px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.top-bar .logo { color: white; font-weight: 700; font-size: 16px; margin-right: 8px; }
+.top-bar .logo span { color: #63b3ed; }
+.top-bar .separator { width: 1px; height: 24px; background: rgba(255,255,255,0.2); }
+
+.btn-label-mobile { display: none; }
+.btn-label-desktop { display: inline; }
+.btn-share-mobile { display: none !important; }
+
+.hamburger-btn {
+  display: none;
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.btn {
+  padding: 7px 16px; border: none; border-radius: 5px;
+  font-family: inherit; font-size: 12.5px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.btn-primary { background: #3182ce; color: white; }
+.btn-primary:hover { background: #2b6cb0; }
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { background: #38a169; }
+.btn-outline { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); }
+.btn-outline:hover { background: rgba(255,255,255,0.1); }
+
+#downloadDirectBtn {
+  display: none !important;
+}
+
+.save-indicator { color: rgba(255,255,255,0.6); font-size: 11px; margin-left: auto; }
+.save-indicator.saved { color: #68d391; }
+.export-mode-hint {
+  color: rgba(255,255,255,0.78);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* ============ LAYOUT ============ */
+.app-layout { display: flex; min-height: calc(100vh - 50px); }
+
+.sidebar {
+  width: var(--sidebar-width); background: white;
+  border-right: 1px solid var(--border); padding: 20px 16px;
+  position: sticky; top: 50px; height: calc(100vh - 50px);
+  overflow-y: auto; flex-shrink: 0;
+  transition: width 0.22s ease, padding 0.22s ease, border-color 0.22s ease;
+}
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 900;
+}
+.right-spacer-bar {
+  display: none;
+  position: fixed;
+  right: 18px;
+  top: 130px;
+  z-index: 920;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  padding: 6px;
+  width: 104px;
+}
+
+@media (min-width: 1200px) {
+  .right-spacer-bar {
+    display: block;
+  }
+  .resume-area {
+    padding-right: 138px;
+  }
+}
+.right-spacer-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--accent);
+  cursor: move;
+  user-select: none;
+  white-space: nowrap;
+}
+.right-spacer-head {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 6px;
+  position: relative;
+  flex-wrap: nowrap;
+}
+.quick-space-info-btn {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--accent);
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 50%;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.quick-space-info-btn:hover {
+  background: var(--accent);
+  color: white;
+}
+.quick-space-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 170px;
+  background: #1f2937;
+  color: white;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 10px;
+  line-height: 1.35;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+  pointer-events: none;
+  z-index: 25;
+}
+.quick-space-info-btn:hover + .quick-space-tooltip,
+.right-spacer-bar.show-info .quick-space-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.right-spacer-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+.right-spacer-btn {
+  flex: 1;
+  border: 1px solid var(--border);
+  background: #f8fafc;
+  color: var(--primary);
+  border-radius: 5px;
+  padding: 4px 0;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.right-spacer-btn:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+.right-spacer-fab {
+  display: none;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: white;
+  border-radius: 999px;
+  width: 38px;
+  height: 38px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sidebar-reopen-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 62px;
+  left: calc(var(--sidebar-width) + 8px);
+  z-index: 960;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #2b6cb0;
+  border-radius: 999px;
+  background: #2b6cb0;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+  transition: left 0.22s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-reopen-tab:hover {
+  background: #1a4f8a;
+  color: #ffffff;
+}
+
+body.sidebar-collapsed .sidebar-reopen-tab {
+  left: 10px;
+}
+.sidebar h3 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-light); margin-bottom: 12px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.sidebar h3:not(:first-child) { margin-top: 20px; }
+
+/* Toggle switches */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+.toggle-row label { font-size: 13px; font-weight: 500; color: var(--text); cursor: pointer; }
+.toggle-switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-switch .slider {
+  position: absolute; inset: 0; background: #cbd5e0;
+  border-radius: 10px; cursor: pointer; transition: 0.2s;
+}
+.toggle-switch .slider::before {
+  content: ''; position: absolute; width: 16px; height: 16px;
+  background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.2s;
+}
+.toggle-switch input:checked + .slider { background: var(--accent); }
+.toggle-switch input:checked + .slider::before { transform: translateX(16px); }
+
+/* Photo shape */
+.photo-shape-selector { display: flex; gap: 8px; margin-top: 4px; }
+.shape-option {
+  width: 40px; height: 40px; border: 2px solid var(--border);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; background: #f7fafc;
+}
+.shape-option.square { border-radius: 4px; }
+.shape-option.circle { border-radius: 50%; }
+.shape-option.active { border-color: var(--accent); background: var(--accent-light); }
+.shape-option .shape-inner { width: 20px; height: 20px; background: var(--accent); opacity: 0.4; }
+.shape-option.square .shape-inner { border-radius: 2px; }
+.shape-option.circle .shape-inner { border-radius: 50%; }
+.shape-option.active .shape-inner { opacity: 0.8; }
+.shape-label { font-size: 10px; text-align: center; color: var(--text-light); margin-top: 2px; }
+
+/* Sidebar add buttons */
+.sidebar-add-btn {
+  display: block; width: 100%; padding: 8px 12px;
+  border: 1px dashed var(--border); border-radius: 5px;
+  background: transparent; font-family: inherit;
+  font-size: 12.5px; font-weight: 500; color: var(--accent);
+  cursor: pointer; text-align: left; margin-bottom: 4px; transition: all 0.15s;
+}
+.sidebar-add-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+
+.sidebar-add-btn[data-add="space"] {
+  background: var(--accent);
+  color: #ffffff;
+  border-style: solid;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.sidebar-add-btn[data-add="space"]:hover {
+  background: #1f5a96;
+  border-color: #1f5a96;
+}
+
+.font-scale-control {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+.font-scale-control label {
+  display: block;
+  font-size: 12px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.font-scale-slider {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.font-scale-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+@media (min-width: 769px) {
+  body.sidebar-collapsed .sidebar {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-right-color: transparent;
+    overflow: hidden;
+  }
+}
+
+/* ============ RESUME AREA ============ */
+.resume-area { flex: 1; padding: 24px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; gap: 20px; }
+
+/* Each page is a separate div */
+.resume-page {
+  width: var(--page-width);
+  background: var(--bg);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+  border-radius: 2px;
+  overflow: visible;
+  position: relative;
+}
+
+/* Page number */
+.page-number {
+  position: absolute;
+  bottom: 12px;
+  right: 24px;
+  font-size: 10px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* ============ RESUME HEADER ============ */
+.r-header {
+  padding: 24px 48px 20px;
+  border-bottom: 2px solid var(--primary);
+  display: flex; align-items: flex-start;
+  text-align: left; gap: 0;
+}
+.r-photo {
+  flex-shrink: 0; width: 120px; height: 120px;
+  border-radius: 4px; border: 2px solid #333;
+  overflow: hidden; cursor: pointer; background: #f7fafc;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  margin-right: 20px;
+  position: relative; /* Required: so img fills absolutely */
+}
+.r-photo:hover { border-color: var(--accent); }
+.r-photo.has-photo { border-style: solid; }
+.r-photo.circle-photo { border-radius: 50%; }
+.r-photo img {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  display: block; pointer-events: none;
+}
+.r-photo-placeholder {
+  text-align: center; font-size: 10px;
+  color: var(--text-light); font-weight: 500;
+  position: relative; z-index: 1; line-height: 1.4;
+}
+.r-photo input[type="file"] { display: none; }
+
+.r-header-info { flex: 1; }
+.r-name { font-size: 24pt; font-weight: 700; color: var(--primary); letter-spacing: -0.3px; margin-bottom: 2px; }
+.r-title { font-size: 14pt; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+.r-contact { font-size: 11.5pt; color: var(--text-light); font-weight: 400; }
+.r-contact div { line-height: 1.15; }
+.r-header-table { width: 100%; border-collapse: collapse; }
+.r-header-photo { width: 120px; vertical-align: top; padding-right: 20px; }
+.r-header-info-cell { vertical-align: top; }
+
+/* ============ RESUME BODY ============ */
+.r-body { padding: 20px 48px 40px; text-align: left; }
+.r-section { margin-bottom: 15px; position: relative; }
+.r-section:last-child { margin-bottom: 0; }
+.r-section.hidden-section { display: none !important; }
+
+.r-spacer {
+  display: block;
+  height: var(--spacer-height, 20px);
+  margin: 8px 0;
+  width: 100%;
+  border: 1px dashed var(--border);
+  background: #f7fafc;
+  padding: 4px 6px;
+}
+.r-spacer.page-break {
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+  break-before: page;
+  page-break-before: always;
+}
+.r-spacer .spacer-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-light);
+}
+.r-spacer .spacer-range {
+  width: 140px;
+}
+.r-spacer .spacer-bar { display: none; }
+.r-spacer .spacer-remove {
+  margin-left: auto;
+  border: none;
+  background: var(--danger-light);
+  color: var(--danger);
+  border-radius: 3px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 10px;
+}
+.r-spacer .spacer-remove:hover { background: var(--danger); color: white; }
+.r-spacer .spacer-pagebreak-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+.r-spacer .spacer-pagebreak-label input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.r-section-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px; border-bottom: 1.5px solid var(--primary); padding-bottom: 3px;
+}
+.r-section-title {
+  font-size: 14px; font-weight: 700; color: var(--primary);
+  text-transform: uppercase; letter-spacing: 1px; flex: 1;
+}
+.drag-handle-section {
+  cursor: grab; color: #cbd5e0; font-size: 14px; padding: 2px 4px;
+  opacity: 0; transition: opacity 0.15s;
+}
+.r-section:hover .drag-handle-section { opacity: 1; }
+
+.section-remove-btn {
+  border: none;
+  background: var(--danger-light);
+  color: var(--danger);
+  border-radius: 3px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-size: 10px;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.section-remove-btn:hover { background: var(--danger); color: white; }
+.r-section:hover .section-remove-btn { opacity: 1; }
+
+.r-summary { font-size: 12px; line-height: 1.6; color: var(--text); }
+
+/* Entries */
+.r-entry {
+  margin-bottom: 12px; position: relative;
+  padding-right: 0;
+}
+.r-entry:last-child { margin-bottom: 0; }
+.entries-list { list-style: none; padding-left: 0; margin: 0; }
+.entries-list > li.r-entry { list-style: none; }
+.r-entry-header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.r-entry-role { font-weight: 700; font-size: 12.5px; color: var(--primary); }
+.r-entry-dates { font-size: 11.5px; color: var(--text-light); font-weight: 500; white-space: nowrap; }
+.r-entry-company { font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 3px; }
+.r-entry-desc { font-size: 12px; color: var(--text-light); font-style: italic; margin-bottom: 3px; }
+
+.r-bullets { list-style: disc; padding-left: 20px; margin: 0; }
+.r-bullets li {
+  font-size: 12px; line-height: 1.5; margin-bottom: 2px;
+  color: var(--text); position: relative; padding-right: 18px;
+}
+
+/* Controls - opacity-based, no layout shift */
+.entry-controls {
+  position: absolute; top: 0; right: 0;
+  display: flex; gap: 3px; z-index: 10;
+  opacity: 0; transition: opacity 0.15s;
+}
+.r-entry:hover .entry-controls { opacity: 1; }
+
+.entry-ctrl-btn {
+  width: 20px; height: 20px; border-radius: 3px; border: none;
+  font-size: 10px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: all 0.12s;
+}
+.ctrl-drag { background: #edf2f7; color: #a0aec0; cursor: grab; }
+.ctrl-delete { background: var(--danger-light); color: var(--danger); }
+.ctrl-delete:hover { background: var(--danger); color: white; }
+
+.add-bullet-btn {
+  padding: 2px 8px; border: 1px dashed transparent;
+  border-radius: 3px; background: transparent; font-family: inherit;
+  font-size: 10px; color: transparent; cursor: pointer;
+  margin-top: 3px; transition: all 0.15s; height: 20px; line-height: 16px;
+}
+.r-entry:hover .add-bullet-btn { color: var(--accent); border-color: var(--border); }
+.add-bullet-btn:hover { background: var(--accent-light) !important; border-color: var(--accent) !important; color: var(--accent) !important; }
+
+.bullet-delete {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; border-radius: 50%; border: none;
+  background: var(--danger-light); color: var(--danger);
+  font-size: 9px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.12s;
+}
+.r-bullets li:hover .bullet-delete { opacity: 1; }
+.bullet-delete:hover { background: var(--danger); color: white; }
+
+/* Skills */
+.r-skills-list { list-style: none; padding-left: 0; margin: 0; }
+.r-skills-list li { margin-bottom: 6px; }
+.r-skill-cat {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.r-skill-val {
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+/* Languages */
+.r-languages-line {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+@media screen {
+  .r-section-title::before,
+  .r-section-title::marker,
+  .r-entry-role::before,
+  .r-entry-role::marker,
+  .r-edu-degree::before,
+  .r-edu-degree::marker,
+  .r-cert-name::before,
+  .r-cert-name::marker,
+  .r-skill-cat::before,
+  .r-skill-cat::marker {
+    content: none !important;
+    display: none !important;
+  }
+}
+
+/* Cert */
+.r-cert { margin-bottom: 4px; }
+.r-cert-name { font-weight: 600; font-size: 12px; color: var(--text); }
+.r-cert-issuer { font-size: 11.5px; color: var(--text-light); }
+
+/* Education */
+.r-edu-degree { font-weight: 700; font-size: 12px; color: var(--primary); }
+.r-edu-school { font-size: 12px; color: var(--accent); font-weight: 500; }
+.r-edu-dates { font-size: 11.5px; color: var(--text-light); }
+
+/* Editable */
+[contenteditable="true"] {
+  outline: none; border-radius: 2px;
+  transition: background 0.12s, box-shadow 0.12s; min-width: 30px;
+}
+[contenteditable="true"]:hover { background: rgba(235,244,255,0.5); }
+[contenteditable="true"]:focus { background: var(--edit-bg); box-shadow: inset 0 0 0 1.5px var(--edit-border); }
+
+/* Sortable */
+.sortable-ghost { opacity: 0.4; background: var(--accent-light) !important; }
+.sortable-chosen { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 20px; right: 20px; background: var(--primary);
+  color: white; padding: 10px 18px; border-radius: 6px; font-size: 13px;
+  font-weight: 500; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transform: translateY(80px); opacity: 0; transition: all 0.3s; z-index: 9999;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: #276749; }
+
+/* ============ RESUME PAGE ============ */
+.resume-page {
+  position: relative;
+}
+.resume-page.text-justify .r-summary,
+.resume-page.text-justify .r-entry-desc,
+.resume-page.text-justify .r-bullets li {
+  text-align: justify;
+}
+
+/* ============ PRINT ============ */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  body { 
+    background: white; 
+    margin: 0; 
+    padding: 0; 
+  }
+  
+  .app-layout { 
+    display: block; 
+    margin: 0; 
+    padding: 0; 
+  }
+  
+  .resume-area { 
+    padding: 0; 
+    gap: 0; 
+    margin: 0; 
+    display: block; 
+  }
+  
+  .resume-page {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    max-height: none;
+    box-shadow: none;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    background: white;
+    overflow: visible;
+    page-break-after: auto;
+    break-after: auto;
+  }
+  
+  /* ============ HIDE ALL UI ELEMENTS ============ */
+  .top-bar,
+  .hamburger-btn,
+  .sidebar-overlay,
+  .sidebar,
+  .toast,
+  .preview-modal,
+  .right-spacer-bar,
+  .page-number,
+  .entry-controls, 
+  .add-bullet-btn, 
+  .bullet-delete, 
+  .drag-handle-section,
+  .section-remove-btn,
+  .spacer-controls,
+  .r-photo-placeholder { 
+    display: none !important; 
+  }
+  
+  /* ============ HIDE FILE INPUT CONTROLS ============ */
+  input[type="file"],
+  #photoInput,
+  [type="file"] { 
+    display: none !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
+  }
+  
+  /* ============ REMOVE HOVER EFFECTS ============ */
+  [contenteditable="true"]:hover, 
+  [contenteditable="true"]:focus { 
+    background: none !important; 
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  
+  /* Hide hidden sections */
+  .r-section.hidden-section { 
+    display: none !important; 
+  }
+  
+  .r-spacer {
+    display: block;
+    height: var(--spacer-height, 20px);
+    margin: 8px 0;
+    width: 100%;
+  }
+  
+  /* Page settings - suppress browser headers/footers */
+  @page { 
+    size: A4;
+    margin: 0.5in;
+  }
+  @page :first {
+    margin: 0.5in;
+  }
+}
+
+/* ============ MOBILE ============ */
+@media (max-width: 1100px) {
+  .resume-area { padding: 12px; }
+  .resume-page { width: 100%; min-height: auto; }
+}
+@media (max-width: 600px) {
+  .top-bar { padding: 8px 12px; gap: 6px; }
+  .btn { padding: 6px 10px; font-size: 11px; }
+  .export-mode-hint { display: none; }
+  .r-header { flex-direction: column; padding: 20px 20px 16px; }
+  .r-body { padding: 16px 20px 24px; }
+  .r-photo { width: 72px; height: 72px; }
+}
+
+@media (max-width: 768px) {
+  .btn-label-desktop { display: none !important; }
+  .btn-label-mobile { display: inline !important; }
+  .btn-share-mobile { display: inline-flex !important; }
+  .sidebar-reopen-tab {
+    display: none !important;
+  }
+  .hamburger-btn { display: inline-flex; align-items: center; justify-content: center; }
+  .app-layout { position: relative; display: block; }
+  .resume-area { width: 100%; }
+  .sidebar {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    height: calc(100vh - 50px);
+    width: 80vw;
+    max-width: 320px;
+    z-index: 950;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 6px 0 24px rgba(0,0,0,0.18);
+  }
+  .sidebar-overlay {
+    inset: auto;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  #printBtn {
+    display: inline-flex !important;
+  }
+  #sidebarToggleBtn {
+    display: none !important;
+  }
+  .right-spacer-bar {
+    display: none !important;
+  }
+  body.sidebar-open .sidebar { transform: translateX(0); }
+  body.sidebar-open .sidebar-overlay { opacity: 1; pointer-events: auto; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- TOP TOOLBAR -->
+<div class="top-bar">
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu" title="Menu">Menu</button>
+  <div class="logo">ATS<span>Resume</span> <span style="font-size:11px;font-weight:400;color:#90cdf4;margin-left:6px;">v1.0.0</span></div>
+  <div class="separator"></div>
+  <div class="local-actions">
+    <button class="btn btn-primary" type="button" data-action="download-ats-text">Download ATS text</button>
+    <button class="btn btn-success" type="button" data-action="save-local-backup">Save editable backup</button>
+    <button class="btn btn-outline" type="button" data-action="load-local-backup">Load backup</button>
+    <button class="btn btn-outline" type="button" data-action="ats-check">ATS check</button>
+  </div>
+  <span class="save-indicator" id="saveIndicator">Edit locally — save a backup</span>
+  <button class="btn btn-outline" data-action="reset-all">Reset All</button>
+</div>
+<input type="file" id="backupInput" accept="application/json,.json" hidden>
+<div class="ats-report" id="atsReport" role="dialog" aria-label="ATS check" hidden>
+  <h3>ATS readability check</h3><div id="atsReportBody"></div>
+  <button type="button" data-action="close-ats-check">Close</button>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<button id="sidebarReopenTab" class="sidebar-reopen-tab" title="Show panel" aria-label="Show panel">&gt;</button>
+
+<div class="right-spacer-bar" aria-label="Quick spacing controls">
+  <button class="right-spacer-fab" data-action="quickspace-toggle" aria-label="Open spacing options" title="Add space">+</button>
+  <div class="right-spacer-head">
+    <div class="right-spacer-title" id="quickSpaceHandle" title="Drag to move">Space by line</div>
+    <button class="quick-space-info-btn" data-action="quickspace-info" aria-label="How to use spacing" title="How to use">i</button>
+    <div class="quick-space-tooltip" id="quickSpaceTooltip">Click inside resume text, then use +1 or +2 to add blank lines. This uses ATS-friendly line breaks.</div>
+  </div>
+  <div class="right-spacer-actions">
+    <button class="right-spacer-btn" data-action="quickspace-add1" title="Add 1 blank line">+1</button>
+    <button class="right-spacer-btn" data-action="quickspace-add2" title="Add 2 blank lines">+2</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <h3>Photo Shape</h3>
+    <div class="photo-shape-selector">
+      <div style="text-align:center">
+        <div class="shape-option square active" id="shapeSquare" data-shape="square">
+          <div class="shape-inner"></div>
+        </div>
+        <div class="shape-label">Square</div>
+      </div>
+      <div style="text-align:center">
+        <div class="shape-option circle" id="shapeCircle" data-shape="circle">
+          <div class="shape-inner"></div>
+        </div>
+        <div class="shape-label">Circle</div>
+      </div>
+    </div>
+
+    <h3>Layout Options</h3>
+    <div class="toggle-row">
+      <label for="toggleJustify">Justify Text (Even Edges)</label>
+      <div class="toggle-switch">
+        <input type="checkbox" id="toggleJustify">
+        <span class="slider"></span>
+      </div>
+    </div>
+    <div class="font-scale-control">
+      <label for="fontSizeScale">Font Size: <span id="fontSizeScaleValue">100%</span></label>
+      <input id="fontSizeScale" class="font-scale-slider" type="range" min="85" max="130" step="1" value="100">
+      <div class="font-scale-meta">
+        <span>Smaller (85%)</span>
+        <span>Affects on-screen preview</span>
+        <span>Larger (130%)</span>
+      </div>
+    </div>
+
+    <h3>Show / Hide Sections</h3>
+    <div id="toggleContainer"></div>
+
+    <h3>Add New Items</h3>
+    <button class="sidebar-add-btn" data-add="experience">+ Add Experience</button>
+    <button class="sidebar-add-btn" data-add="education">+ Add Education</button>
+    <button class="sidebar-add-btn" data-add="project">+ Add Project</button>
+    <button class="sidebar-add-btn" data-add="cert">+ Add Certification</button>
+    <button class="sidebar-add-btn" data-add="skill">+ Add Skill Category</button>
+    <button class="sidebar-add-btn" data-add="space" title="Adds ATS-friendly blank lines like Shift+Enter">Add Space</button>
+
+    <h3>ATS Readability Tips</h3>
+    <div style="font-size:11.5px; color:var(--text-light); line-height:1.6;">
+      <p style="margin-bottom:5px">Single column layout</p>
+      <p style="margin-bottom:5px">Calibri font (ATS safe)</p>
+      <p style="margin-bottom:5px">Standard section headings</p>
+      <p style="margin-bottom:5px">Check the downloaded text for reading order</p>
+      <p style="margin-bottom:5px">Photo is excluded from the ATS text</p>
+      <p style="margin-bottom:5px">Consistent date format</p>
+      <p style="margin-bottom:5px">Standard bullet points</p>
+      <p style="margin-bottom:5px; color:var(--accent); font-weight:600;">No universal ATS score exists. Follow the employer's accepted file types.</p>
+    </div>
+
+    <h3>Spacing Tips</h3>
+    <div style="font-size:11.5px; color:var(--text-light); line-height:1.6;">
+      <p style="margin-bottom:5px"><strong>Shift+Enter:</strong> Add line breaks in any text field for quick spacing</p>
+      <p style="margin-bottom:5px"><strong>Add Space:</strong> Use "+ Add Space" to insert ATS-friendly blank lines</p>
+      <p style="margin-bottom:5px"><strong>Right Quick Space:</strong> Use +1 or +2 to add space by line (drag it on desktop)</p>
+      <p style="margin-bottom:5px"><strong>Best practice:</strong> Use 1-2 blank lines only, so ATS parsing stays clean</p>
+    </div>
+  </div>
+
+  <!-- RESUME PAGES -->
+  <div class="resume-area" id="resumeArea">
+    <div class="resume-page" id="resumePage">
+
+      <!-- HEADER -->
+      <div class="r-header">
+        <div class="r-photo" id="photoBox" title="Click or drag photo here">
+          <div class="r-photo-placeholder" id="photoPlaceholder">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.4;display:block;margin:0 auto 3px">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span id="photoPlaceholderText">Click or drag<br>photo here</span>
+          </div>
+        </div>
+        <div class="r-header-info">
+          <h1 class="r-name" contenteditable="true">Shruti Dhamde</h1>
+          <p class="r-title" contenteditable="true">Cloud Engineer</p>
+          <div class="r-contact">
+            <p contenteditable="true">Phone: +48 XXX XXX XXX</p>
+            <p contenteditable="true">Email: shrutidhamde10@gmail.com</p>
+            <p contenteditable="true">LinkedIn: https://linkedin.com/in/shrutidhamde</p>
+            <p contenteditable="true">Location: Krakow, Poland</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="r-body" id="sectionsContainer">
+
+        <div class="r-section" data-section="summary" id="section-summary">
+          <div class="r-section-header">
+            <span class="drag-handle-section">::</span>
+            <h2 class="r-section-title" contenteditable="true">Professional Summary</h2>
+            <button class="section-remove-btn" onclick="hideSection(this)">Delete</button>
+          </div>
+          <p class="r-summary" contenteditable="true">Microsoft-certified Azure professional with a strong foundation in cloud data engineering and evolving expertise in Azure Data Factory, Synapse Analytics, SQL Database, and big data technologies. Skilled in designing and implementing ETL/ELT workflows, data integration, and data transformation processes. Passionate about building scalable and secure data solutions that transform raw data into meaningful business insights.</p>
+        </div>
+
+        <div class="r-section" data-section="experience" id="section-experience">
+          <div class="r-section-header">
+            <span class="drag-handle-section">::</span>
+            <h2 class="r-section-title" contenteditable="true">Professional Experience</h2>
+            <button class="section-remove-btn" onclick="hideSection(this)">Delete</button>
+          </div>
+          <ul class="entries-list" id="experienceList">
+            <li class="r-entry"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-entry-role" contenteditable="true">Engineer - Cloud &amp; Infra Management</p><p class="r-entry-dates" contenteditable="true">July 2023 - Present</p><p class="r-entry-company" contenteditable="true">LTM, Krakow, Poland</p><ul class="r-bullets"><li contenteditable="true">Provide L2/L3 support for Azure SQL Database, resolving 100+ performance, connectivity, and provisioning incidents across enterprise environments.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Implement and manage High Availability &amp; Disaster Recovery (HA/DR) solutions including Always On Availability Groups, Auto-failover Groups, and Geo-Replication, ensuring 99.9%+ uptime across 50+ databases.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Perform advanced query performance tuning, indexing optimization, and execution plan analysis, reducing average query response time by up to 40%.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Advised customers on cost optimization and Azure purchasing models, enabling efficient resource utilization.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Troubleshoot and resolved Azure networking issues involving VNets, NSGs, Private Endpoints, Service Endpoints, and Load Balancers, ensuring secure cloud connectivity.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Collaborated with cross-functional teams to design and maintain secure, scalable, and compliant cloud environments supporting critical customer workloads.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Designed and conducted on-boarding and training programs for over 80+ new engineers, equipping them with essential Azure knowledge and tools for professional growth.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li></ul><button class="add-bullet-btn" onclick="addBulletToEntry(this)">+ Add Bullet</button></li>
+
+            <li class="r-entry"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-entry-role" contenteditable="true">Programmer Analyst</p><p class="r-entry-dates" contenteditable="true">July 2021 - February 2023</p><p class="r-entry-company" contenteditable="true">Cognizant Technology Solutions India Pvt. Ltd., Hyderabad, India</p><ul class="r-bullets"><li contenteditable="true">Designed and executed User Acceptance Test (UAT) cases, identified bugs, and ensured timely resolution for high customer satisfaction.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Managed FACETS member/group creation and validated EDI 270-271 benefit values, maintaining compliance documentation.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Utilized SQL queries for data extraction and analysis, improving testing efficiency by 25%.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Reported testing progress and defects via HP ALM, collaborating with global teams to achieve 98% on-time project completion.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Trained 15+ new team members on testing processes and EDI validation, enhancing team productivity and reducing onboarding time.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li></ul><button class="add-bullet-btn" onclick="addBulletToEntry(this)">+ Add Bullet</button></li>
+
+            <li class="r-entry"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-entry-role" contenteditable="true">Intern</p><p class="r-entry-dates" contenteditable="true">February 2021 - June 2021</p><p class="r-entry-company" contenteditable="true">Cognizant Technology Solutions India Pvt. Ltd., India</p><ul class="r-bullets"><li contenteditable="true">Acquired knowledge of software testing methodologies and gained hands-on experience in writing test cases and solving problem statements.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Learned UFT automation testing, creating automated test cases to improve testing efficiency and reduce manual effort.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Applied SQL for data manipulation, querying, and supporting testing processes, gained foundational database skills.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li><li contenteditable="true">Gained understanding of SDLC and Agile methodologies, contributing to efficient project delivery.<button class="bullet-delete" onclick="removeBullet(this)">x</button></li></ul><button class="add-bullet-btn" onclick="addBulletToEntry(this)">+ Add Bullet</button></li>
+          </ul>
+        </div>
+
+        <div class="r-section" data-section="skills" id="section-skills">
+          <div class="r-section-header">
+            <span class="drag-handle-section">::</span>
+            <h2 class="r-section-title" contenteditable="true">Skills</h2>
+            <button class="section-remove-btn" onclick="hideSection(this)">Delete</button>
+          </div>
+          <ul class="r-skills-list" id="skillsGrid">
+            <li><p class="r-skill-cat" contenteditable="true">Cloud & Data Platforms: </p><p class="r-skill-val" contenteditable="true">Azure Data Factory, Azure Synapse Analytics, Azure Data Lake Storage (ADLS), Azure Databricks, Apache Spark, ETL/ELT Processing, CI/CD Pipeline for ADF</p></li>
+            <li><p class="r-skill-cat" contenteditable="true">Database Technologies: </p><p class="r-skill-val" contenteditable="true">Azure SQL Database, Azure SQL Managed Instance, MS SQL Server, T-SQL, MySQL, SQL Server Management Studio (SSMS)</p></li>
+            <li><p class="r-skill-cat" contenteditable="true">Programming Languages: </p><p class="r-skill-val" contenteditable="true">SQL, Python</p></li>
+            <li><p class="r-skill-cat" contenteditable="true">Azure AI & Analytics: </p><p class="r-skill-val" contenteditable="true">Azure AI Fundamentals, Azure Cognitive Services, Natural Language Processing (NLP)</p></li>
+            <li><p class="r-skill-cat" contenteditable="true">Networking & Security: </p><p class="r-skill-val" contenteditable="true">DNS, Azure Virtual Networks, Network Security Groups, Private Endpoints, Load Balancers, Azure Firewall, RBAC</p></li>
+            <li><p class="r-skill-cat" contenteditable="true">Tools & Methodologies: </p><p class="r-skill-val" contenteditable="true">Azure Monitor, Log Analytics, HP ALM, FACETS, Agile Methodology, Dynamic 365</p></li>
+          </ul>
+        </div>
+
+        <div class="r-section" data-section="languages" id="section-languages">
+          <div class="r-section-header">
+            <span class="drag-handle-section">::</span>
+            <h2 class="r-section-title" contenteditable="true">Languages</h2>
+            <button class="section-remove-btn" onclick="hideSection(this)">Delete</button>
+          </div>
+          <p class="r-languages-line" contenteditable="true">English(Professional) |Hindi(Native)</p>
+        </div>
+
+        <div class="r-section" data-section="education" id="section-education">
+          <div class="r-section-header">
+            <span class="drag-handle-section">::</span>
+            <h2 class="r-section-title" contenteditable="true">Education</h2>
+            <button class="section-remove-btn" onclick="hideSection(this)">Delete</button>
+          </div>
+          <ul class="entries-list" id="educationList">
+            <li class="r-entry"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-edu-degree" contenteditable="true">Post-Secondary School - Business Science and Administration</p><p class="r-edu-school" contenteditable="true">Policealna Szkola Zawodowa Centrum Nauki Biznesu i Administracji, Krakow, Poland</p><p class="r-edu-dates" contenteditable="true">February 2024 - Present</p></li>
+            <li class="r-entry"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-edu-degree" contenteditable="true">Bachelor of Engineering in Electronics and Communication Engineering</p><p class="r-edu-school" contenteditable="true">Shri Ramdeobaba College of Engineering and Management, Nagpur, India</p><p class="r-edu-dates" contenteditable="true">July 2018 - June 2021</p></li>
+            <li class="r-entry"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-edu-degree" contenteditable="true">Diploma in Electronics and Telecommunication Engineering</p><p class="r-edu-school" contenteditable="true">Government Polytechnic, Nagpur, India</p><p class="r-edu-dates" contenteditable="true">July 2015 - June 2018</p></li>
+          </ul>
+        </div>
+
+        <div class="r-section" data-section="certifications" id="section-certifications">
+          <div class="r-section-header">
+            <span class="drag-handle-section">::</span>
+            <h2 class="r-section-title" contenteditable="true">Certifications & Professional Training</h2>
+            <button class="section-remove-btn" onclick="hideSection(this)">Delete</button>
+          </div>
+          <ul class="entries-list" id="certList">
+            <li class="r-entry r-cert"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-cert-name" contenteditable="true">Microsoft Certified: Azure Database Administrator Associate</p><p class="r-cert-issuer" contenteditable="true">Microsoft | Credential ID: 67A614-3422O4</p></li>
+            <li class="r-entry r-cert"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-cert-name" contenteditable="true">Microsoft Certified: Azure AI Fundamentals</p><p class="r-cert-issuer" contenteditable="true">Microsoft | Credential ID: 509855-D6N8CC</p></li>
+            <li class="r-entry r-cert"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-cert-name" contenteditable="true">Azure Synapse Analytics</p><p class="r-cert-issuer" contenteditable="true">Udemy</p></li>
+            <li class="r-entry r-cert"><div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete" onclick="removeEntry(this)">x</button></div><p class="r-cert-name" contenteditable="true">Azure Data Factory</p><p class="r-cert-issuer" contenteditable="true">Udemy</p></li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="page-number" id="pageNum1"></div>
+    </div>
+  </div>
+</div>
+
+<!-- File input hidden outside all print containers -->
+<input type="file" id="photoInput" accept="image/*" style="display:none;position:absolute;left:-9999px;top:-9999px;visibility:hidden;" />
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SECTIONS = [
+  { id: 'summary', label: 'Professional Summary' },
+  { id: 'experience', label: 'Work Experience' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'languages', label: 'Languages' },
+  { id: 'education', label: 'Education' },
+  { id: 'certifications', label: 'Certifications' },
+];
+
+let saveTimer = null;
+let entryCounter = 100;
+let lastFocusedEditable = null;
+let quickSpaceDragging = false;
+let fontScaleReminderTimer = null;
+// Store visibility state separately (not dependent on DOM)
+let sectionVisibility = {};
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', () => {
+  // Init visibility defaults
+  SECTIONS.forEach(s => { sectionVisibility[s.id] = true; });
+  loadVisibility();
+  buildToggles();
+  applyVisibility();
+  loadPhotoShape();
+  loadTextAlignment();
+  initSortable();
+  loadContent();
+  setupAutoSave();
+  rebindAll(); // Wire photo input + drag-drop on first load
+  document.getElementById('backupInput').addEventListener('change', loadLocalBackup);
+  initQuickSpaceDrag();
+  
+  // Make toggle sliders clickable
+  const makeSliderClickable = (inputId) => {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const slider = input.nextElementSibling;
+    if (slider && slider.classList.contains('slider')) {
+      slider.addEventListener('click', () => {
+        input.checked = !input.checked;
+        input.dispatchEvent(new Event('change'));
+      });
+    }
+  };
+  
+  makeSliderClickable('toggleJustify');
+  makeSliderClickable('togglePageNumbers');
+  loadPageNumbers();
+  loadFontScale();
+
+  const justifyToggle = document.getElementById('toggleJustify');
+  if (justifyToggle) {
+    justifyToggle.addEventListener('change', function() {
+      toggleTextAlignment(this.checked);
+    });
+  }
+
+  const pageToggle = document.getElementById('togglePageNumbers');
+  if (pageToggle) {
+    pageToggle.addEventListener('change', function() {
+      togglePageNumbers(this.checked);
+    });
+  }
+
+  const fontSlider = document.getElementById('fontSizeScale');
+  if (fontSlider) {
+    fontSlider.addEventListener('input', function() {
+      setFontScale(this.value);
+    });
+  }
+
+  initDelegatedHandlers();
+
+  loadSidebarState();
+  const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+  if (sidebarToggleBtn) {
+    sidebarToggleBtn.addEventListener('click', toggleSidebarCollapsed);
+  }
+
+  const sidebarReopenTab = document.getElementById('sidebarReopenTab');
+  if (sidebarReopenTab) {
+    sidebarReopenTab.addEventListener('click', toggleSidebarCollapsed);
+  }
+
+  const hamburger = document.getElementById('hamburgerBtn');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (hamburger) hamburger.addEventListener('click', toggleSidebar);
+  if (overlay) overlay.addEventListener('click', closeSidebar);
+
+  document.addEventListener('click', (e) => {
+    const bar = document.querySelector('.right-spacer-bar');
+    if (!bar) return;
+    if (!bar.contains(e.target)) {
+      closeQuickSpaceInfo();
+      if (window.innerWidth <= 768) closeQuickSpaceBar();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      closeSidebar();
+      closeQuickSpaceBar();
+    } else {
+      resetQuickSpacePosition();
+    }
+    loadSidebarState();
+  });
+
+  stripInlineHandlers(document);
+});
+
+function initDelegatedHandlers() {
+  document.addEventListener('click', (event) => {
+    const actionEl = event.target.closest('[data-action]');
+    if (actionEl) {
+      const action = actionEl.getAttribute('data-action');
+      if (action === 'export-resume') {
+        exportResume();
+        return;
+      }
+      if (action === 'download-ats-text') {
+        downloadAtsText();
+        return;
+      }
+      if (action === 'save-local-backup') {
+        downloadLocalBackup();
+        return;
+      }
+      if (action === 'load-local-backup') {
+        document.getElementById('backupInput').click();
+        return;
+      }
+      if (action === 'ats-check') {
+        showAtsCheck();
+        return;
+      }
+      if (action === 'close-ats-check') {
+        document.getElementById('atsReport').hidden = true;
+        return;
+      }
+      if (action === 'reset-all') {
+        resetAll();
+        return;
+      }
+      if (action === 'quickspace-toggle') {
+        toggleQuickSpaceBar();
+        return;
+      }
+      if (action === 'quickspace-info') {
+        toggleQuickSpaceInfo(event);
+        return;
+      }
+      if (action === 'quickspace-add1') {
+        handleQuickSpace(1);
+        return;
+      }
+      if (action === 'quickspace-add2') {
+        handleQuickSpace(2);
+        return;
+      }
+    }
+
+    const shapeEl = event.target.closest('[data-shape]');
+    if (shapeEl) {
+      const shape = shapeEl.getAttribute('data-shape');
+      if (shape === 'square' || shape === 'circle') {
+        setPhotoShape(shape);
+      }
+      return;
+    }
+
+    const addEl = event.target.closest('[data-add]');
+    if (addEl) {
+      const addType = addEl.getAttribute('data-add');
+      if (addType === 'experience') addExperienceEntry();
+      else if (addType === 'education') addEducationEntry();
+      else if (addType === 'project') addProjectEntry();
+      else if (addType === 'cert') addCertEntry();
+      else if (addType === 'skill') addSkillRow();
+      else if (addType === 'space') addSpacer();
+      return;
+    }
+
+    const sectionDelete = event.target.closest('.section-remove-btn');
+    if (sectionDelete) {
+      hideSection(sectionDelete);
+      return;
+    }
+
+    const entryDelete = event.target.closest('.entry-ctrl-btn.ctrl-delete');
+    if (entryDelete) {
+      removeEntry(entryDelete);
+      return;
+    }
+
+    const bulletDelete = event.target.closest('.bullet-delete');
+    if (bulletDelete) {
+      removeBullet(bulletDelete);
+      return;
+    }
+
+    const addBullet = event.target.closest('.add-bullet-btn');
+    if (addBullet) {
+      addBulletToEntry(addBullet);
+    }
+  });
+}
+
+function stripInlineHandlers(root) {
+  const scope = root || document;
+  scope.querySelectorAll('[onclick],[onchange],[oninput]').forEach((el) => {
+    el.removeAttribute('onclick');
+    el.removeAttribute('onchange');
+    el.removeAttribute('oninput');
+  });
+}
+
+
+
+function getPrintLayoutCss() {
+  return `
+    * {
+      box-sizing: border-box;
+      font-family: Calibri, Arial, sans-serif;
+      letter-spacing: normal;
+      word-spacing: normal;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    #resumePage,
+    .resume-page {
+      margin: 0;
+      padding: 0;
+      background: white;
+      overflow: visible;
+    }
+    .r-header {
+      display: table;
+      width: 100%;
+      margin-bottom: 0;
+      padding: 18px 0 16px 0;
+      border-bottom: 2px solid #1a2744;
+    }
+    .r-body {
+      padding: 18px 0 32px 0;
+    }
+    .r-photo {
+      display: table-cell;
+      width: 120px;
+      height: 120px;
+      vertical-align: top;
+      padding-right: 20px;
+    }
+    .r-photo img {
+      width: 120px;
+      height: 120px;
+      display: block;
+      border: 2px solid #333;
+      border-radius: 4px;
+    }
+    .r-photo.circle-photo img {
+      border-radius: 50%;
+    }
+    .r-header-info {
+      display: table-cell;
+      vertical-align: top;
+    }
+    h1.r-name {
+      font-size: 24pt;
+      font-weight: 700;
+      color: #1a2744;
+      letter-spacing: -0.3px;
+      margin: 0 0 2px 0;
+    }
+    p.r-title {
+      font-size: 14pt;
+      font-weight: 600;
+      color: #2b6cb0;
+      margin: 0 0 6px 0;
+    }
+    .r-contact {
+      font-size: 11.5pt;
+      color: #718096;
+      font-weight: 400;
+    }
+    .r-contact p,
+    .r-contact div {
+      margin: 0;
+      line-height: 1.15;
+    }
+    .r-section {
+      margin-bottom: 15px;
+      position: relative;
+    }
+    .r-section:last-child {
+      margin-bottom: 0;
+    }
+    .r-section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-bottom: 3px;
+      border-bottom: 1.5px solid #1a2744;
+    }
+    h2.r-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a2744;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+    p.r-summary {
+      font-size: 12px;
+      line-height: 1.6;
+      margin: 0;
+      color: #2d3748;
+    }
+    .entries-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .r-entry {
+      margin-bottom: 12px;
+      padding-right: 0;
+    }
+    .r-entry:last-child {
+      margin-bottom: 0;
+    }
+    .r-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+    p.r-entry-role,
+    .r-entry-role {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1a2744;
+      margin: 0;
+    }
+    p.r-entry-dates,
+    .r-entry-dates {
+      font-size: 11.5px;
+      color: #718096;
+      font-weight: 500;
+      white-space: nowrap;
+      margin: 0;
+    }
+    p.r-entry-company,
+    .r-entry-company {
+      font-size: 12px;
+      font-weight: 600;
+      color: #2b6cb0;
+      margin: 0 0 3px 0;
+    }
+    p.r-entry-desc,
+    .r-entry-desc {
+      font-size: 12px;
+      color: #718096;
+      font-style: italic;
+      margin: 0 0 3px 0;
+    }
+    .r-bullets {
+      list-style: disc;
+      padding-left: 20px;
+      margin: 0;
+    }
+    .r-bullets li {
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 2px;
+      color: #2d3748;
+      padding-right: 18px;
+    }
+    .r-skills-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .r-skills-list li {
+      margin-bottom: 6px;
+    }
+    p.r-skill-cat,
+    .r-skill-cat {
+      font-weight: 700;
+      color: #1a2744;
+      display: inline;
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    p.r-skill-val,
+    .r-skill-val {
+      display: inline;
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.35;
+      color: #2d3748;
+    }
+    .r-languages-line {
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 0;
+      color: #2d3748;
+    }
+    p.r-edu-degree,
+    .r-edu-degree {
+      font-weight: 700;
+      font-size: 12px;
+      color: #1a2744;
+      margin: 0;
+    }
+    p.r-edu-school,
+    .r-edu-school {
+      font-size: 12px;
+      color: #2b6cb0;
+      font-weight: 500;
+      margin: 0;
+    }
+    p.r-edu-dates,
+    .r-edu-dates,
+    p.r-cert-issuer,
+    .r-cert-issuer {
+      font-size: 11.5px;
+      color: #718096;
+      margin: 0;
+    }
+    p.r-cert-name,
+    .r-cert-name {
+      font-weight: 600;
+      font-size: 12px;
+      margin: 0;
+      color: #2d3748;
+    }
+    #resumePage.text-justify .r-summary,
+    #resumePage.text-justify .r-entry-desc,
+    #resumePage.text-justify .r-bullets li,
+    .resume-page.text-justify .r-summary,
+    .resume-page.text-justify .r-entry-desc,
+    .resume-page.text-justify .r-bullets li {
+      text-align: justify;
+    }
+    ${getScaledTypographyCss('')}
+  `;
+}
+
+// ============ VISIBILITY - standalone state ============
+function loadVisibility() {
+  try {
+    const saved = localStorage.getItem('resume_visibility_shruti_local_v1');
+    if (saved) sectionVisibility = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveVisibility() {
+  try { localStorage.setItem('resume_visibility_shruti_local_v1', JSON.stringify(sectionVisibility)); } catch(e) {}
+}
+
+function applyVisibility() {
+  Object.entries(sectionVisibility).forEach(([id, visible]) => {
+    const el = document.getElementById('section-' + id);
+    if (el) el.classList.toggle('hidden-section', !visible);
+  });
+}
+
+function hideSection(btn) {
+  const section = btn.closest('.r-section');
+  if (!section) return;
+  const id = section.getAttribute('data-section');
+  section.classList.add('hidden-section');
+  if (id) {
+    sectionVisibility[id] = false;
+    const toggle = document.getElementById('toggle-' + id);
+    if (toggle) toggle.checked = false;
+    saveVisibility();
+  }
+  scheduleSave();
+}
+
+function buildToggles() {
+  const container = document.getElementById('toggleContainer');
+  container.innerHTML = '';
+  SECTIONS.forEach(s => {
+    const isVisible = sectionVisibility[s.id] !== false;
+    const row = document.createElement('div');
+    row.className = 'toggle-row';
+
+    const label = document.createElement('label');
+    label.textContent = s.label;
+    label.setAttribute('for', 'toggle-' + s.id);
+
+    const switchDiv = document.createElement('div');
+    switchDiv.className = 'toggle-switch';
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.id = 'toggle-' + s.id;
+    input.checked = isVisible;
+
+    // Direct event listener - no inline onchange
+    input.addEventListener('change', function() {
+      sectionVisibility[s.id] = this.checked;
+      const el = document.getElementById('section-' + s.id);
+      if (el) el.classList.toggle('hidden-section', !this.checked);
+      saveVisibility();
+      scheduleSave();
+    });
+
+    const slider = document.createElement('span');
+    slider.className = 'slider';
+    slider.addEventListener('click', () => {
+      input.checked = !input.checked;
+      input.dispatchEvent(new Event('change'));
+    });
+
+    switchDiv.appendChild(input);
+    switchDiv.appendChild(slider);
+    row.appendChild(label);
+    row.appendChild(switchDiv);
+    container.appendChild(row);
+  });
+}
+
+// ============ PHOTO SHAPE ============
+function setPhotoShape(shape) {
+  const photo = document.getElementById('photoBox');
+  if (shape === 'circle') photo.classList.add('circle-photo');
+  else photo.classList.remove('circle-photo');
+  document.getElementById('shapeSquare').classList.toggle('active', shape === 'square');
+  document.getElementById('shapeCircle').classList.toggle('active', shape === 'circle');
+  try { localStorage.setItem('resume_photo_shape_shruti_local_v1', shape); } catch(e) {}
+}
+
+function loadPhotoShape() {
+  try {
+    const shape = localStorage.getItem('resume_photo_shape_shruti_local_v1') || 'square';
+    setPhotoShape(shape);
+  } catch(e) {}
+}
+
+// ============ SORTABLE ============
+function initSortable() {
+  if (!window.Sortable) {
+    return;
+  }
+  const sc = document.getElementById('sectionsContainer');
+  if (sc && sc.__sortable) sc.__sortable.destroy();
+  if (sc) {
+    sc.__sortable = Sortable.create(sc, {
+      animation: 200, handle: '.drag-handle-section',
+      ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
+      onEnd: () => { scheduleSave(); }
+    });
+  }
+  document.querySelectorAll('.entries-list').forEach(list => {
+    if (list.__sortable) list.__sortable.destroy();
+    list.__sortable = Sortable.create(list, {
+      animation: 200, handle: '.ctrl-drag',
+      ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
+      onEnd: () => { scheduleSave(); }
+    });
+  });
+  document.querySelectorAll('.r-bullets').forEach(ul => {
+    if (ul.__sortable) ul.__sortable.destroy();
+    ul.__sortable = Sortable.create(ul, { animation: 150, ghostClass: 'sortable-ghost', onEnd: () => scheduleSave() });
+  });
+}
+
+function initSortableForBullets(ul) {
+  if (!window.Sortable || !ul) return;
+  new Sortable(ul, { animation: 150, ghostClass: 'sortable-ghost', onEnd: () => scheduleSave() });
+}
+
+function togglePageNumbers(enabled) {
+  try { localStorage.setItem('resume_page_numbers_shruti_local_v1', enabled ? '1' : '0'); } catch(e) {}
+  const hint = document.getElementById('pageNumberHint');
+  if (hint) hint.style.display = enabled ? 'block' : 'none';
+}
+
+function loadPageNumbers() {
+  try {
+    const stored = localStorage.getItem('resume_page_numbers_shruti_local_v1');
+    const enabled = stored === '1';
+    const toggle = document.getElementById('togglePageNumbers');
+    if (toggle) toggle.checked = enabled;
+    const hint = document.getElementById('pageNumberHint');
+    if (hint) hint.style.display = enabled ? 'block' : 'none';
+    if (stored === null) {
+      localStorage.setItem('resume_page_numbers_shruti_local_v1', '0');
+    }
+  } catch(e) {}
+}
+
+function isPageNumbersEnabled() {
+  try { return localStorage.getItem('resume_page_numbers_shruti_local_v1') === '1'; } catch(e) { return false; }
+}
+
+function getFontScaleValue() {
+  try {
+    const storedRaw = localStorage.getItem('resume_font_scale_shruti_local_v1');
+    const stored = Number(storedRaw === null ? '105' : storedRaw);
+    const clamped = Math.max(85, Math.min(130, Number.isFinite(stored) ? stored : 105));
+    return clamped / 100;
+  } catch(e) {
+    return 1.05;
+  }
+}
+
+function getScaledTypographyCss(prefix) {
+  const p = prefix || '';
+  const scale = getFontScaleValue();
+  const px = (value) => (Math.round(value * scale * 100) / 100).toString();
+
+  return `
+    ${p}.r-name { font-size: ${px(32)}px; }
+    ${p}.r-title { font-size: ${px(19)}px; }
+    ${p}.r-contact, ${p}p.r-contact { font-size: ${px(15.33)}px; }
+    ${p}.r-section-title, ${p}h2.r-section-title { font-size: ${px(14)}px; }
+    ${p}.r-summary, ${p}p.r-summary { font-size: ${px(12)}px; }
+    ${p}.r-entry-role, ${p}p.r-entry-role { font-size: ${px(12.5)}px; }
+    ${p}.r-entry-dates, ${p}p.r-entry-dates { font-size: ${px(11.5)}px; }
+    ${p}.r-entry-company, ${p}p.r-entry-company { font-size: ${px(12)}px; }
+    ${p}.r-entry-desc, ${p}p.r-entry-desc { font-size: ${px(12)}px; }
+    ${p}.r-bullets li { font-size: ${px(12)}px; }
+    ${p}.r-skill-cat, ${p}p.r-skill-cat { font-size: ${px(12)}px; }
+    ${p}.r-skill-val, ${p}p.r-skill-val { font-size: ${px(12)}px; }
+    ${p}.r-languages-line, ${p}p.r-languages-line { font-size: ${px(12)}px; }
+    ${p}.r-edu-degree, ${p}p.r-edu-degree { font-size: ${px(12.5)}px; }
+    ${p}.r-edu-school, ${p}p.r-edu-school { font-size: ${px(12)}px; }
+    ${p}.r-edu-dates, ${p}.r-cert-issuer, ${p}p.r-edu-dates, ${p}p.r-cert-issuer { font-size: ${px(11.5)}px; }
+    ${p}.r-cert-name, ${p}p.r-cert-name { font-size: ${px(12)}px; }
+  `;
+}
+
+function applyFontScalePreviewCss() {
+  let styleTag = document.getElementById('fontScalePreviewStyle');
+  if (!styleTag) {
+    styleTag = document.createElement('style');
+    styleTag.id = 'fontScalePreviewStyle';
+    document.head.appendChild(styleTag);
+  }
+  styleTag.textContent = getScaledTypographyCss('#resumePage ');
+}
+
+function setFontScale(value, opts) {
+  const options = opts || {};
+  const raw = Number(value);
+  const clamped = Math.max(85, Math.min(130, Number.isFinite(raw) ? raw : 100));
+
+  const slider = document.getElementById('fontSizeScale');
+  if (slider) slider.value = String(clamped);
+
+  const label = document.getElementById('fontSizeScaleValue');
+  if (label) label.textContent = clamped + '%';
+
+  try { localStorage.setItem('resume_font_scale_shruti_local_v1', String(clamped)); } catch(e) {}
+  applyFontScalePreviewCss();
+
+  if (!options.silent) {
+    if (fontScaleReminderTimer) clearTimeout(fontScaleReminderTimer);
+    fontScaleReminderTimer = setTimeout(() => {
+      showToast('Font size updated in the on-screen preview. ATS text uses plain formatting.', '');
+    }, 220);
+  }
+}
+
+function loadFontScale() {
+  const scalePercent = Math.round(getFontScaleValue() * 100);
+  setFontScale(scalePercent, { silent: true });
+}
+
+function updateSidebarToggleButton() {
+  const btn = document.getElementById('sidebarToggleBtn');
+  const iconBtn = document.getElementById('sidebarReopenTab');
+  const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+  if (btn) {
+    btn.textContent = isCollapsed ? 'Show Panel' : 'Hide Panel';
+  }
+  if (iconBtn) {
+    iconBtn.textContent = isCollapsed ? '>' : '<';
+    iconBtn.title = isCollapsed ? 'Show panel' : 'Hide panel';
+    iconBtn.setAttribute('aria-label', isCollapsed ? 'Show panel' : 'Hide panel');
+  }
+}
+
+function toggleSidebarCollapsed() {
+  if (window.innerWidth < 769) return;
+  document.body.classList.toggle('sidebar-collapsed');
+  const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+  try { localStorage.setItem('resume_sidebar_collapsed_shruti_local_v1', isCollapsed ? '1' : '0'); } catch(e) {}
+  updateSidebarToggleButton();
+}
+
+function loadSidebarState() {
+  if (window.innerWidth < 769) {
+    document.body.classList.remove('sidebar-collapsed');
+    updateSidebarToggleButton();
+    return;
+  }
+  try {
+    const collapsed = localStorage.getItem('resume_sidebar_collapsed_shruti_local_v1') === '1';
+    document.body.classList.toggle('sidebar-collapsed', collapsed);
+  } catch(e) {
+    document.body.classList.remove('sidebar-collapsed');
+  }
+  updateSidebarToggleButton();
+}
+
+function toggleTextAlignment(justify) {
+  const page = document.getElementById('resumePage');
+  if (!page) return;
+  if (justify) {
+    page.classList.add('text-justify');
+  } else {
+    page.classList.remove('text-justify');
+  }
+  try { localStorage.setItem('text_justify_shruti_local_v1', justify ? '1' : '0'); } catch(e) {}
+  scheduleSave();
+}
+
+function loadTextAlignment() {
+  try {
+    const stored = localStorage.getItem('text_justify_shruti_local_v1');
+    const justify = stored === null ? true : stored === '1';
+    const toggle = document.getElementById('toggleJustify');
+    const page = document.getElementById('resumePage');
+    if (toggle) toggle.checked = justify;
+    if (page && justify) page.classList.add('text-justify');
+    if (stored === null) {
+      localStorage.setItem('text_justify_shruti_local_v1', '1');
+    }
+  } catch(e) {}
+}
+
+// ============ ADD ENTRIES ============
+function createEntry(innerHtml, extraClass) {
+  const entry = document.createElement('li');
+  entry.className = 'r-entry' + (extraClass ? ' ' + extraClass : '');
+  entry.innerHTML = '<div class="entry-controls"><button class="entry-ctrl-btn ctrl-drag">::</button><button class="entry-ctrl-btn ctrl-delete">x</button></div>' + innerHtml;
+  return entry;
+}
+
+function addExperienceEntry() {
+  const list = document.getElementById('experienceList');
+  const entry = createEntry('<p class="r-entry-role" contenteditable="true">Job Title</p><p class="r-entry-dates" contenteditable="true">Mon YYYY - Mon YYYY</p><p class="r-entry-company" contenteditable="true">Company | Location</p><ul class="r-bullets"><li contenteditable="true">Led [initiative], achieving [measurable result] for [stakeholders]<button class="bullet-delete">x</button></li></ul><button class="add-bullet-btn">+ Add Bullet</button>');
+  list.appendChild(entry);
+  initSortableForBullets(entry.querySelector('.r-bullets'));
+  entry.querySelector('.r-entry-role').focus();
+  showToast('Experience added'); scheduleSave();
+}
+
+function addEducationEntry() {
+  const list = document.getElementById('educationList');
+  const entry = createEntry('<p class="r-edu-degree" contenteditable="true">Degree - Field of Study</p><p class="r-edu-school" contenteditable="true">Institution Name</p><p class="r-edu-dates" contenteditable="true">Year</p>');
+  list.appendChild(entry);
+  entry.querySelector('.r-edu-degree').focus();
+  showToast('Education added'); scheduleSave();
+}
+
+function addProjectEntry() {
+  let list = document.getElementById('projectList');
+  if (!list) {
+    const container = document.getElementById('sectionsContainer');
+    if (!container) {
+      showToast('Could not add project section. Try refreshing page.');
+      return;
+    }
+
+    const section = document.createElement('div');
+    section.className = 'r-section';
+    section.setAttribute('data-section', 'projects');
+    section.id = 'section-projects';
+    section.innerHTML = '<div class="r-section-header"><span class="drag-handle-section">::</span><h2 class="r-section-title" contenteditable="true">Projects</h2><button class="section-remove-btn">Delete</button></div><ul class="entries-list" id="projectList"></ul>';
+
+    const insertBefore = document.getElementById('section-education') || document.getElementById('section-certifications');
+    if (insertBefore) {
+      container.insertBefore(section, insertBefore);
+    } else {
+      container.appendChild(section);
+    }
+
+    initSortable();
+    list = document.getElementById('projectList');
+  }
+
+  const entry = createEntry('<p class="r-entry-role" contenteditable="true">Project Name</p><p class="r-entry-desc" contenteditable="true">Brief description.</p><ul class="r-bullets"><li contenteditable="true">Achieved [result] by implementing [approach]<button class="bullet-delete">x</button></li></ul><button class="add-bullet-btn">+ Add Bullet</button>');
+  list.appendChild(entry);
+  initSortableForBullets(entry.querySelector('.r-bullets'));
+  entry.querySelector('.r-entry-role').focus();
+  showToast('Project added'); scheduleSave();
+}
+
+function addCertEntry() {
+  const list = document.getElementById('certList');
+  const entry = createEntry('<p class="r-cert-name" contenteditable="true">Certification Name</p><p class="r-cert-issuer" contenteditable="true">Issuing Organization</p>', 'r-cert');
+  list.appendChild(entry);
+  entry.querySelector('.r-cert-name').focus();
+  showToast('Certification added'); scheduleSave();
+}
+
+function addSkillRow() {
+  const grid = document.getElementById('skillsGrid');
+  const li = document.createElement('li');
+  const cat = document.createElement('p'); cat.className = 'r-skill-cat'; cat.contentEditable = 'true'; cat.textContent = 'Category:';
+  const val = document.createElement('p'); val.className = 'r-skill-val'; val.contentEditable = 'true'; val.textContent = 'Skill 1, Skill 2, Skill 3';
+  li.appendChild(cat); li.appendChild(val);
+  grid.appendChild(li); cat.focus();
+  showToast('Skill category added'); scheduleSave();
+}
+
+function addSpacer() {
+  addSpacerLines(2);
+}
+
+function addSpacerLines(lineCount) {
+  const activeEditable = getActiveEditableForSpacing();
+  const safeCount = Math.max(1, Math.min(2, Number(lineCount) || 1));
+
+  if (!activeEditable) {
+    showToast('Click inside the exact resume line where you want extra space, then press +1 or +2.');
+    return;
+  }
+
+  if (insertSoftLineBreak(activeEditable, safeCount)) {
+    showToast('Added ' + safeCount + ' blank line' + (safeCount > 1 ? 's' : ''));
+    scheduleSave();
+    return;
+  }
+
+  showToast('Could not insert spacer at current cursor position');
+}
+
+function handleQuickSpace(lineCount) {
+  addSpacerLines(lineCount);
+  closeQuickSpaceInfo();
+  if (window.innerWidth <= 768) closeQuickSpaceBar();
+}
+
+function toggleQuickSpaceBar() {
+  if (window.innerWidth <= 768) {
+    document.body.classList.toggle('quick-space-open');
+  }
+}
+
+function closeQuickSpaceBar() {
+  document.body.classList.remove('quick-space-open');
+}
+
+function toggleQuickSpaceInfo(event) {
+  if (event) event.stopPropagation();
+  const bar = document.querySelector('.right-spacer-bar');
+  if (!bar) return;
+  bar.classList.toggle('show-info');
+}
+
+function closeQuickSpaceInfo() {
+  const bar = document.querySelector('.right-spacer-bar');
+  if (!bar) return;
+  bar.classList.remove('show-info');
+}
+
+function initQuickSpaceDrag() {
+  const bar = document.querySelector('.right-spacer-bar');
+  const handle = document.getElementById('quickSpaceHandle');
+  if (!bar || !handle) return;
+
+  const dragState = { offsetX: 0, offsetY: 0 };
+
+  handle.addEventListener('pointerdown', (e) => {
+    if (window.innerWidth < 1200) return;
+    quickSpaceDragging = true;
+
+    const rect = bar.getBoundingClientRect();
+    dragState.offsetX = e.clientX - rect.left;
+    dragState.offsetY = e.clientY - rect.top;
+
+    bar.style.left = rect.left + 'px';
+    bar.style.top = rect.top + 'px';
+    bar.style.right = 'auto';
+    bar.style.bottom = 'auto';
+    try { handle.setPointerCapture(e.pointerId); } catch(err) {}
+    e.preventDefault();
+  });
+
+  handle.addEventListener('pointermove', (e) => {
+    if (!quickSpaceDragging) return;
+    const width = bar.offsetWidth || 150;
+    const height = bar.offsetHeight || 58;
+    const maxX = Math.max(8, window.innerWidth - width - 8);
+    const maxY = Math.max(8, window.innerHeight - height - 8);
+    const nextX = Math.min(maxX, Math.max(8, e.clientX - dragState.offsetX));
+    const nextY = Math.min(maxY, Math.max(8, e.clientY - dragState.offsetY));
+
+    bar.style.left = nextX + 'px';
+    bar.style.top = nextY + 'px';
+  });
+
+  const endDrag = (e) => {
+    if (!quickSpaceDragging) return;
+    quickSpaceDragging = false;
+    try { handle.releasePointerCapture(e.pointerId); } catch(err) {}
+  };
+
+  handle.addEventListener('pointerup', endDrag);
+  handle.addEventListener('pointercancel', endDrag);
+}
+
+function resetQuickSpacePosition() {
+  const bar = document.querySelector('.right-spacer-bar');
+  if (!bar) return;
+  bar.style.removeProperty('left');
+  bar.style.removeProperty('top');
+  bar.style.removeProperty('right');
+  bar.style.removeProperty('bottom');
+}
+
+function getActiveEditableForSpacing() {
+  const selection = window.getSelection();
+  if (selection && selection.rangeCount > 0) {
+    const node = selection.getRangeAt(0).commonAncestorContainer;
+    const elementNode = node && node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+    const editableFromSelection = elementNode && elementNode.closest
+      ? elementNode.closest('[contenteditable="true"]')
+      : null;
+    if (editableFromSelection) return editableFromSelection;
+  }
+
+  if (lastFocusedEditable && document.contains(lastFocusedEditable)) {
+    return lastFocusedEditable;
+  }
+
+  return null;
+}
+
+function insertSoftLineBreak(editable, count) {
+  if (!editable) return false;
+  editable.focus();
+
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return false;
+
+  const range = selection.getRangeAt(0);
+  if (!editable.contains(range.commonAncestorContainer)) return false;
+
+  const repeat = Math.max(1, Number(count) || 1);
+  for (let i = 0; i < repeat; i += 1) {
+    const br = document.createElement('br');
+    range.insertNode(br);
+    range.setStartAfter(br);
+    range.collapse(true);
+  }
+
+  selection.removeAllRanges();
+  selection.addRange(range);
+  editable.dispatchEvent(new Event('input', { bubbles: true }));
+  return true;
+}
+
+function updateSpacer(input) {
+  const spacer = input.closest('.r-spacer');
+  if (!spacer) return;
+  const value = parseInt(input.value, 10) || 0;
+  spacer.style.setProperty('--spacer-height', value + 'px');
+  spacer.setAttribute('data-height', String(value));
+  const label = spacer.querySelector('.spacer-value');
+  if (label) label.textContent = value + 'px';
+  scheduleSave();
+}
+
+function removeSpacer(btn) {
+  const spacer = btn.closest('.r-spacer');
+  if (spacer) {
+    spacer.remove();
+    scheduleSave();
+  }
+}
+
+function togglePageBreak(checkbox) {
+  const spacer = checkbox.closest('.r-spacer');
+  if (!spacer) return;
+  if (checkbox.checked) {
+    spacer.classList.add('page-break');
+    spacer.setAttribute('data-page-break', 'true');
+  } else {
+    spacer.classList.remove('page-break');
+    spacer.removeAttribute('data-page-break');
+  }
+  scheduleSave();
+}
+
+// ============ BULLETS ============
+function addBulletToEntry(btn) {
+  const entry = btn.closest('.r-entry');
+  let ul = entry.querySelector('.r-bullets');
+  if (!ul) { ul = document.createElement('ul'); ul.className = 'r-bullets'; entry.insertBefore(ul, btn); initSortableForBullets(ul); }
+  const li = document.createElement('li'); li.contentEditable = 'true';
+  li.innerHTML = 'Achieved [result] by implementing [action], improving [metric] by [X]%<button class="bullet-delete">x</button>';
+  ul.appendChild(li); li.focus();
+  const range = document.createRange(); range.selectNodeContents(li.childNodes[0]);
+  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+  scheduleSave();
+}
+
+function removeBullet(btn) { const li = btn.closest('li'); if (li) { li.remove(); scheduleSave(); } }
+
+function removeEntry(btn) {
+  const entry = btn.closest('.r-entry');
+  if (entry && confirm('Remove this entry?')) { entry.remove(); scheduleSave(); showToast('Entry removed'); }
+}
+
+// ============ PHOTO ============
+function handlePhoto(event) {
+  const file = event && event.target && event.target.files
+    ? event.target.files[0]
+    : (event && event.dataTransfer ? event.dataTransfer.files[0] : null);
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    showToast('Please select an image file (JPG, PNG, etc.)');
+    return;
+  }
+
+  showToast('Loading photo...');
+
+  // Use canvas resize: 400x400 is high enough for crisp PDF, small enough to store
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(file);
+  img.onload = function() {
+    URL.revokeObjectURL(objectUrl);
+    const SIZE = 256;
+    const canvas = document.createElement('canvas');
+    canvas.width = SIZE;
+    canvas.height = SIZE;
+    const ctx = canvas.getContext('2d');
+    // Crop to square from center
+    const side = Math.min(img.width, img.height);
+    const sx = (img.width - side) / 2;
+    const sy = (img.height - side) / 2;
+    ctx.drawImage(img, sx, sy, side, side, 0, 0, SIZE, SIZE);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+    setPhotoFromDataUrl(dataUrl);
+    showToast('Photo uploaded successfully.', 'success');
+  };
+  img.onerror = function() {
+    URL.revokeObjectURL(objectUrl);
+    // Fallback: try FileReader directly
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      setPhotoFromDataUrl(e.target.result);
+      showToast('Photo uploaded.', 'success');
+    };
+    reader.onerror = function() {
+      showToast('Could not load image. Try a different file.');
+    };
+    reader.readAsDataURL(file);
+  };
+  img.src = objectUrl;
+}
+
+function setPhotoFromDataUrl(dataUrl) {
+  const box = document.getElementById('photoBox');
+  if (!box) return;
+  
+  // Hide placeholder
+  const ph = document.getElementById('photoPlaceholder');
+  if (ph) ph.style.display = 'none';
+  box.classList.add('has-photo');
+  
+  // Remove any old img first, then create fresh
+  const oldImg = box.querySelector('img');
+  if (oldImg) oldImg.remove();
+  
+  const img = document.createElement('img');
+  img.src = dataUrl;
+  img.alt = 'Profile photo';
+  img.style.position = 'absolute';
+  img.style.top = '0';
+  img.style.left = '0';
+  img.style.width = '100%';
+  img.style.height = '100%';
+  img.style.objectFit = 'cover';
+  img.style.display = 'block';
+  img.style.pointerEvents = 'none';
+  box.insertBefore(img, box.firstChild);
+  
+  // Save to BOTH storages for maximum compatibility
+  try { 
+    if (dataUrl.length > 5242880) {
+      showToast('Photo too large (>5MB). Use smaller image.', '');
+      return;
+    }
+    localStorage.setItem('resume_photo_shruti_local_v1', dataUrl);
+  } catch(e) { 
+    showToast('Could not save photo. Storage full or unavailable.', '');
+  }
+  try { 
+    sessionStorage.setItem('resume_photo_shruti_local_v1', dataUrl);
+  } catch(e) { }
+  
+  // Also trigger a save of the resume content
+  scheduleSave();
+}
+
+function getStoredPhoto() {
+  try {
+    // Check live DOM first (most reliable)
+    const box = document.getElementById('photoBox');
+    if (box) {
+      const img = box.querySelector('img');
+      if (img && img.src && img.src.startsWith('data:')) return img.src;
+    }
+    let photo = localStorage.getItem('resume_photo_shruti_local_v1');
+    if (photo && photo.startsWith('data:')) return photo;
+    photo = sessionStorage.getItem('resume_photo_shruti_local_v1');
+    if (photo && photo.startsWith('data:')) return photo;
+    return '';
+  } catch(e) { 
+    console.error('Error retrieving photo:', e);
+    return ''; 
+  }
+}
+
+function compressImageToDataUrl(file, targetSize, quality) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = targetSize;
+      canvas.height = targetSize;
+      const ctx = canvas.getContext('2d');
+
+      const s = Math.min(img.width, img.height);
+      const sx = (img.width - s) / 2;
+      const sy = (img.height - s) / 2;
+      ctx.drawImage(img, sx, sy, s, s, 0, 0, targetSize, targetSize);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', quality);
+      const sizeBytes = dataUrlToBytes(dataUrl);
+      URL.revokeObjectURL(url);
+      resolve({ dataUrl, sizeBytes });
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Image load failed'));
+    };
+
+    img.src = url;
+  });
+}
+
+function dataUrlToBytes(dataUrl) {
+  const base64 = dataUrl.split(',')[1] || '';
+  return Math.floor((base64.length * 3) / 4);
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+// ============ AUTO SAVE ============
+function setupAutoSave() {
+  document.addEventListener('input', (e) => {
+    if (e.target.closest('#sectionsContainer') || e.target.closest('.resume-page')) scheduleSave();
+  });
+
+  document.addEventListener('focusin', (e) => {
+    const editable = e.target && e.target.closest
+      ? e.target.closest('[contenteditable="true"]')
+      : null;
+    if (editable) {
+      lastFocusedEditable = editable;
+    }
+  });
+
+  // Shift+Enter for line breaks in any contenteditable area
+  document.addEventListener('keydown', (e) => {
+    if (e.shiftKey && e.key === 'Enter' && e.target.closest('[contenteditable="true"]')) {
+      e.preventDefault();
+      insertSoftLineBreak(e.target, 1);
+    }
+  });
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  ensureBulletDeleteButtons();
+  const ind = document.getElementById('saveIndicator');
+  if (ind) {
+    ind.textContent = 'Saving...';
+    ind.classList.remove('saved');
+  }
+  saveTimer = setTimeout(() => {
+    const saved = saveContent();
+    if (ind) {
+      ind.textContent = saved ? 'Saved in this browser' : 'Browser save unavailable — use Save editable backup';
+      ind.classList.toggle('saved', saved);
+    }
+  }, 600);
+}
+
+function ensureBulletDeleteButtons() {
+  document.querySelectorAll('.r-bullets li').forEach(li => {
+    if (!li.querySelector('.bullet-delete')) {
+      const btn = document.createElement('button');
+      btn.className = 'bullet-delete';
+      btn.textContent = 'x';
+      li.appendChild(btn);
+    }
+  });
+}
+
+function saveContent() {
+  try {
+    const container = document.getElementById('sectionsContainer');
+    if (container) {
+      const html = container.innerHTML;
+      if (!html || html.trim().length === 0) {
+        return false;
+      }
+      if (html.length > 10485760) {
+        showToast('Resume too large to save (>10MB)', '');
+        return false;
+      }
+      localStorage.setItem('resume_body_shruti_local_v1', html);
+      const header = Array.from(document.querySelectorAll('.r-header-info [contenteditable="true"]'))
+        .map(el => el.textContent || '');
+      localStorage.setItem('resume_header_shruti_local_v1', JSON.stringify(header));
+      saveVisibility();
+      return true;
+    }
+  } catch(e) { 
+    showToast('Could not save resume. Storage may be full.', '');
+    return false;
+  }
+  return false;
+}
+
+function loadContent() {
+  try {
+    const headerJson = localStorage.getItem('resume_header_shruti_local_v1');
+    if (headerJson) {
+      try {
+        const header = JSON.parse(headerJson);
+        const fields = document.querySelectorAll('.r-header-info [contenteditable="true"]');
+        if (Array.isArray(header) && header.length === fields.length) {
+          fields.forEach((el, i) => { if (typeof header[i] === 'string') el.textContent = header[i]; });
+        }
+      } catch(e) { /* Keep the default header if saved text is damaged. */ }
+    }
+    const container = document.getElementById('sectionsContainer');
+    let html = localStorage.getItem('resume_body_shruti_local_v1');
+    if (container && html) {
+      container.innerHTML = html;
+      stripInlineHandlers(container);
+      setTimeout(() => {
+        initSortable();
+        rebindAll();
+      }, 100);
+      showToast('Resume loaded', 'success');
+    }
+    const photo = getStoredPhoto();
+    if (photo) setPhotoFromDataUrl(photo);
+    applyVisibility();
+  } catch(e) { 
+    showToast('Browser autosave unavailable. Use Save editable backup.', '');
+  }
+}
+
+function rebindAll() {
+  const pi = document.getElementById('photoInput');
+  if (pi) {
+    pi.onchange = function(e) { handlePhoto(e); };
+    pi.onclick = function() { this.value = null; };
+  }
+
+  const box = document.getElementById('photoBox');
+  if (box) {
+    box.onclick = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const input = document.getElementById('photoInput');
+      if (input) input.click();
+    };
+
+    box.ondragover = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      box.style.borderColor = 'var(--accent)';
+      box.style.background = '#ebf4ff';
+    };
+
+    box.ondragleave = function(e) {
+      e.preventDefault();
+      box.style.borderColor = '';
+      box.style.background = '';
+    };
+
+    box.ondrop = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      box.style.borderColor = '';
+      box.style.background = '';
+      const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (file) handlePhoto({ target: { files: [file] }, dataTransfer: { files: [file] } });
+    };
+  }
+
+  // Restore spacer page-break checkbox states
+  document.querySelectorAll('.r-spacer .spacer-pagebreak').forEach(checkbox => {
+    const spacer = checkbox.closest('.r-spacer');
+    if (spacer && spacer.classList.contains('page-break')) {
+      checkbox.checked = true;
+    }
+  });
+}
+
+function resetAll() {
+  if (confirm('Clear ALL saved data and reload?')) {
+    localStorage.removeItem('resume_body_shruti_local_v1');
+    localStorage.removeItem('resume_header_shruti_local_v1');
+    localStorage.removeItem('resume_photo_shruti_local_v1');
+    localStorage.removeItem('resume_visibility_shruti_local_v1');
+    localStorage.removeItem('resume_photo_shape_shruti_local_v1');
+    localStorage.removeItem('text_justify_shruti_local_v1');
+    localStorage.removeItem('resume_page_numbers_shruti_local_v1');
+    localStorage.removeItem('resume_font_scale_shruti_local_v1');
+    localStorage.removeItem('resume_sidebar_collapsed_shruti_local_v1');
+    try { sessionStorage.removeItem('resume_photo_shruti_local_v1'); } catch(e) {}
+    location.reload();
+  }
+}
+
+// ============ MOBILE SIDEBAR ============
+function openSidebar() {
+  document.body.classList.add('sidebar-open');
+}
+
+function closeSidebar() {
+  document.body.classList.remove('sidebar-open');
+}
+
+function toggleSidebar() {
+  document.body.classList.toggle('sidebar-open');
+}
+
+
+// ============ TEXT SANITIZATION UTILITY ============
+function cleanText(str) {
+  if (!str || typeof str !== 'string') return '';
+  
+  return str
+    // Remove smart quotes and replace with straight quotes
+    .replace(/[\u2018\u2019\u201A\u0060\u00B4]/g, "'")
+    .replace(/[\u201C\u201D\u201E]/g, '"')
+    // Replace en-dash and em-dash with regular hyphen
+    .replace(/[\u2013\u2014]/g, '-')
+    // Replace ellipsis
+    .replace(/\u2026/g, '...')
+    // Remove zero-width characters
+    .replace(/[\u200B\u200C\u200D\uFEFF]/g, '')
+    // Replace non-breaking spaces with regular spaces
+    .replace(/\u00A0/g, ' ')
+    // Replace tabs with spaces
+    .replace(/\t/g, ' ')
+    // Normalize multiple spaces to single space
+    .replace(/\s+/g, ' ')
+    // Remove any other problematic Unicode characters
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+    // Trim
+    .trim();
+}
+
+function cleanTextPreserveBreaks(str) {
+  if (!str || typeof str !== 'string') return '';
+
+  const normalized = str
+    .replace(/\r\n?/g, '\n')
+    // Remove smart quotes and replace with straight quotes
+    .replace(/[\u2018\u2019\u201A\u0060\u00B4]/g, "'")
+    .replace(/[\u201C\u201D\u201E]/g, '"')
+    // Replace en-dash and em-dash with regular hyphen
+    .replace(/[\u2013\u2014]/g, '-')
+    // Replace ellipsis
+    .replace(/\u2026/g, '...')
+    // Remove zero-width characters
+    .replace(/[\u200B\u200C\u200D\uFEFF]/g, '')
+    // Replace non-breaking spaces and tabs
+    .replace(/\u00A0/g, ' ')
+    .replace(/\t/g, ' ')
+    // Remove control chars except newline
+    .replace(/[\u0000-\u0009\u000B-\u001F\u007F-\u009F]/g, '');
+
+  return normalized
+    .split('\n')
+    .map(line => line.replace(/ {2,}/g, ' ').trim())
+    .join('\n')
+    .replace(/\n{4,}/g, '\n\n\n')
+    .replace(/^\n+|\n+$/g, '');
+}
+
+// ============ APPLY TEXT CLEANING TO ALL CONTENTEDITABLE ELEMENTS ============
+function sanitizeAllText() {
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+    cleanEditableElement(el);
+  });
+}
+
+function cleanEditableElement(el) {
+  if (!el) return;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node => {
+    const cleaned = cleanText(node.nodeValue);
+    if (node.nodeValue !== cleaned) node.nodeValue = cleaned;
+  });
+}
+
+// ============ DIRECT PDF EXPORT (TEXT-BASED, NO CANVAS) ============
+function buildCleanResumeClone() {
+  const original = document.getElementById('resumePage');
+  if (!original) return null;
+
+  const clone = original.cloneNode(true);
+
+  clone.querySelectorAll('.entry-controls,.add-bullet-btn,.bullet-delete,.drag-handle-section,.section-remove-btn,.page-number,.spacer-controls,.spacer-range,.spacer-bar,input[type="file"],#photoInput').forEach(el => el.remove());
+  clone.querySelectorAll('.hidden-section').forEach(el => el.remove());
+  clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+
+  const ph = clone.querySelector('.r-photo-placeholder');
+  if (ph) ph.remove();
+
+  // Remove inline styles but preserve data attributes for spacers
+  clone.querySelectorAll('[style]').forEach(el => {
+    if (!el.classList.contains('r-spacer')) {
+      el.removeAttribute('style');
+    }
+  });
+  
+  clone.querySelectorAll('.r-photo').forEach(el => el.remove());
+
+  return clone;
+}
+
+function getTextFromEl(el) {
+  return cleanText(el ? el.textContent : '');
+}
+
+function getTextWithBreaksFromEl(el) {
+  if (!el) return '';
+
+  const out = [];
+  const blockTags = new Set(['P', 'DIV', 'LI', 'UL', 'OL', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
+
+  const walk = (node) => {
+    if (!node) return;
+
+    if (node.nodeType === Node.TEXT_NODE) {
+      out.push(node.nodeValue || '');
+      return;
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+    const tag = node.tagName;
+    if (tag === 'BR') {
+      out.push('\n');
+      return;
+    }
+
+    node.childNodes.forEach(walk);
+
+    if (blockTags.has(tag)) {
+      out.push('\n');
+    }
+  };
+
+  walk(el);
+  return cleanTextPreserveBreaks(out.join(''));
+}
+
+function getSpacerHeight(spacerEl) {
+  if (!spacerEl) return 0;
+  const dataHeight = spacerEl.getAttribute('data-height');
+  if (dataHeight) {
+    const v = parseFloat(String(dataHeight).replace('px', ''));
+    if (!Number.isNaN(v)) return v;
+  }
+  const styleVal = spacerEl.style ? spacerEl.style.getPropertyValue('--spacer-height') : '';
+  if (styleVal) {
+    const v = parseFloat(String(styleVal).replace('px', ''));
+    if (!Number.isNaN(v)) return v;
+  }
+  return 12;
+}
+
+function extractResumeData() {
+  const root = buildCleanResumeClone();
+  if (!root) return null;
+
+  const data = {
+    header: { name: '', title: '', contact: [] },
+    sections: []
+  };
+
+  const header = root.querySelector('.r-header');
+  if (header) {
+    data.header.name = getTextFromEl(header.querySelector('.r-name'));
+    data.header.title = getTextFromEl(header.querySelector('.r-title'));
+    header.querySelectorAll('.r-contact p, .r-contact div').forEach(el => {
+      const t = getTextFromEl(el);
+      if (t) data.header.contact.push(t);
+    });
+  }
+
+  const container = root.querySelector('#sectionsContainer') || root.querySelector('.r-body');
+  const children = container ? Array.from(container.children) : Array.from(root.querySelectorAll('.r-section'));
+
+  children.forEach(section => {
+    if (section.classList && section.classList.contains('r-spacer')) {
+      const height = getSpacerHeight(section);
+      const pageBreak = section.classList.contains('page-break');
+      data.sections.push({ type: 'spacer', height, pageBreak });
+      return;
+    }
+    if (!section.classList || !section.classList.contains('r-section')) return;
+    const title = getTextFromEl(section.querySelector('.r-section-title'));
+    if (!title) return;
+
+    const summaryEl = section.querySelector('.r-summary');
+    if (summaryEl) {
+      const text = getTextWithBreaksFromEl(summaryEl);
+      if (text) data.sections.push({ type: 'summary', title, text });
+      return;
+    }
+
+    const skillsList = section.querySelector('.r-skills-list');
+    if (skillsList) {
+      const items = [];
+      skillsList.querySelectorAll('li').forEach(li => {
+        const cat = getTextFromEl(li.querySelector('.r-skill-cat'));
+        const val = getTextFromEl(li.querySelector('.r-skill-val'));
+        const line = [cat, val].filter(Boolean).join(' ');
+        if (line) items.push(line);
+      });
+      if (items.length) data.sections.push({ type: 'skills', title, items });
+      return;
+    }
+
+    const langLine = section.querySelector('.r-languages-line');
+    if (langLine) {
+      const text = getTextWithBreaksFromEl(langLine);
+      if (text) data.sections.push({ type: 'languages', title, text });
+      return;
+    }
+
+    const entries = [];
+    section.querySelectorAll('.entries-list .r-entry').forEach(entry => {
+      const role = getTextFromEl(entry.querySelector('.r-entry-role')) ||
+        getTextFromEl(entry.querySelector('.r-edu-degree')) ||
+        getTextFromEl(entry.querySelector('.r-cert-name')) ||
+        '';
+
+      const dates = getTextFromEl(entry.querySelector('.r-entry-dates')) ||
+        getTextFromEl(entry.querySelector('.r-edu-dates')) ||
+        '';
+
+      const company = getTextFromEl(entry.querySelector('.r-entry-company')) ||
+        getTextFromEl(entry.querySelector('.r-edu-school')) ||
+        getTextFromEl(entry.querySelector('.r-cert-issuer')) ||
+        '';
+
+      const desc = getTextWithBreaksFromEl(entry.querySelector('.r-entry-desc')) || '';
+
+      const bullets = [];
+      entry.querySelectorAll('.r-bullets li').forEach(li => {
+        const t = getTextWithBreaksFromEl(li);
+        if (t) bullets.push(t);
+      });
+
+      if (role || dates || company || desc || bullets.length) {
+        entries.push({ role, dates, company, desc, bullets });
+      }
+    });
+
+    if (entries.length) data.sections.push({ type: 'entries', title, entries });
+  });
+
+  return data;
+}
+
+function getExportFilename() {
+  const rawName = cleanText(
+    (document.querySelector('.r-name') && document.querySelector('.r-name').textContent) || ''
+  );
+  const safeBase = rawName
+    .replace(/[^a-zA-Z0-9\s_-]/g, '')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
+  const finalBase = safeBase || 'ATS_Resume';
+  return finalBase + '_Resume.pdf';
+}
+
+function getIosVersion() {
+  var m = navigator.userAgent.match(/OS (\d+)_(\d+)/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+function getAndroidVersion() {
+  var m = navigator.userAgent.match(/Android (\d+)/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+function getShareSupportStatus() {
+  // Test file sharing with a dummy file
+  var testFile = new File([''], 'test.pdf', { type: 'application/pdf' });
+  if (navigator.canShare && navigator.canShare({ files: [testFile] })) {
+    return { supported: true, reason: '' };
+  }
+  var ios = getIosVersion();
+  var android = getAndroidVersion();
+  if (ios !== null) {
+    if (ios < 15) return { supported: false, reason: 'Requires iOS 15+ Safari. You have iOS ' + ios + '.' };
+    return { supported: false, reason: 'PDF file sharing not supported. Use Safari on iOS 15+.' };
+  }
+  if (android !== null) {
+    if (android < 10) return { supported: false, reason: 'Requires Android 10+ Chrome. You have Android ' + android + '.' };
+    return { supported: false, reason: 'PDF file sharing not supported. Use Chrome 86+ on Android.' };
+  }
+  if (!navigator.share) {
+    return { supported: false, reason: 'Web Share API not supported on this browser.' };
+  }
+  return { supported: false, reason: 'PDF file sharing not supported on this browser.' };
+}
+
+function initShareButtonState() {
+  var btn = document.getElementById('shareBtn');
+  if (!btn) return;
+  var status = getShareSupportStatus();
+  if (!status.supported) {
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'not-allowed';
+    btn.title = status.reason;
+  }
+}
+
+function shareResumePdf() {
+  // Upfront check - give instant feedback before any PDF generation
+  var status = getShareSupportStatus();
+  if (!status.supported) {
+    showToast(status.reason + ' Use "Export PDF" to save, then share manually.', '');
+    return;
+  }
+  downloadDirectPdf({ shareMode: true });
+}
+
+function downloadDirectPdf(opts) {
+  const shareMode = !!(opts && opts.shareMode);
+  sanitizeAllText();
+  const exportFilename = getExportFilename();
+  const fontScale = getFontScaleValue();
+  const scaled = (value) => value * fontScale;
+
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    showToast('PDF engine failed to load (CDN issue). Try refreshing.', '');
+    return;
+  }
+
+  const data = extractResumeData();
+  if (!data) {
+    showToast('Nothing to export.', '');
+    return;
+  }
+
+  const doc = new window.jspdf.jsPDF({ unit: 'pt', format: 'a4', compress: true });
+  doc.setTextColor(0, 0, 0);
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 36; // 0.5in
+  const maxWidth = pageWidth - margin * 2;
+  const pxToPt = 0.75;
+  let y = margin;
+
+  const ensureSpace = (lines, lineHeight) => {
+    if (y + lines * lineHeight > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
+
+  const addSpacing = (space) => {
+    y += space;
+    if (y > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
+
+  const addWrappedText = (text, fontSize, style = 'normal') => {
+    if (!text) return;
+    doc.setFont('helvetica', style);
+    doc.setFontSize(fontSize);
+    const lineHeight = fontSize * 1.15;
+    const blocks = String(text).split('\n');
+
+    blocks.forEach(block => {
+      if (!block.trim()) {
+        ensureSpace(1, lineHeight);
+        y += lineHeight;
+        return;
+      }
+      const lines = doc.splitTextToSize(block, maxWidth);
+      ensureSpace(lines.length, lineHeight);
+      doc.text(lines, margin, y);
+      y += lines.length * lineHeight;
+    });
+  };
+
+  const addSectionTitle = (title) => {
+    const t = cleanText(title).toUpperCase();
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(scaled(10.5));
+    const lineHeight = scaled(10.5) * 1.2;
+    ensureSpace(1, lineHeight + 4);
+    doc.text(t, margin, y);
+    y += lineHeight;
+    doc.setDrawColor(26, 39, 68);
+    doc.setLineWidth(0.6);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 4;
+  };
+
+  const addRoleLine = (role, dates) => {
+    const roleText = cleanText(role);
+    const dateText = cleanText(dates);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(scaled(9.4));
+    const lineHeight = scaled(9.4) * 1.15;
+
+    if (roleText && dateText) {
+      const roleWidth = doc.getTextWidth(roleText);
+      const dateWidth = doc.getTextWidth(dateText);
+      if (roleWidth + dateWidth + 12 <= maxWidth) {
+        ensureSpace(1, lineHeight);
+        doc.text(roleText, margin, y);
+        doc.text(dateText, pageWidth - margin - dateWidth, y);
+        y += lineHeight;
+        return;
+      }
+    }
+
+    if (roleText) {
+      ensureSpace(1, lineHeight);
+      doc.text(roleText, margin, y);
+      y += lineHeight;
+    }
+    if (dateText) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(scaled(8.6));
+      const dateHeight = scaled(8.6) * 1.1;
+      ensureSpace(1, dateHeight);
+      doc.text(dateText, margin, y);
+      y += dateHeight;
+    }
+  };
+
+  const addBullet = (text) => {
+    const normalizedBullet = cleanTextPreserveBreaks(text);
+    if (!normalizedBullet) return;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(scaled(9));
+    const lineHeight = scaled(9) * 1.15;
+    const bulletIndent = 12;
+    const blocks = String(normalizedBullet).split('\n');
+    let wroteBullet = false;
+
+    blocks.forEach(block => {
+      if (!block.trim()) {
+        ensureSpace(1, lineHeight);
+        y += lineHeight;
+        return;
+      }
+
+      const lines = doc.splitTextToSize(block, maxWidth - bulletIndent);
+      if (!lines.length) return;
+
+      lines.forEach((line, index) => {
+        ensureSpace(1, lineHeight);
+        if (!wroteBullet && index === 0) {
+          doc.text('-', margin, y);
+        }
+        doc.text(line, margin + bulletIndent, y);
+        y += lineHeight;
+      });
+
+      wroteBullet = true;
+    });
+  };
+
+  if (data.header.name) {
+    // Name - 24pt bold, dark navy (#1a2744) matching desktop
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(scaled(24));
+    doc.setTextColor(26, 39, 68);
+    const nameLineH = scaled(24) * 1.15;
+    const nameLines = doc.splitTextToSize(cleanText(data.header.name), maxWidth);
+    nameLines.forEach(line => {
+      ensureSpace(1, nameLineH);
+      doc.text(line, margin, y);
+      y += nameLineH;
+    });
+  }
+  if (data.header.title) {
+    // Title - 14pt bold, accent blue (#2b6cb0) matching desktop
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(scaled(14));
+    doc.setTextColor(43, 108, 176);
+    const titleLineH = scaled(14) * 1.15;
+    const titleLines = doc.splitTextToSize(cleanText(data.header.title), maxWidth);
+    titleLines.forEach(line => {
+      ensureSpace(1, titleLineH);
+      doc.text(line, margin, y);
+      y += titleLineH;
+    });
+  }
+  if (data.header.contact.length) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(scaled(11.5));
+    doc.setTextColor(113, 128, 150);
+    const lineHeight = scaled(11.5) * 1.15;
+    data.header.contact.forEach(function(line) {
+      const t = cleanText(line);
+      if (!t) return;
+      ensureSpace(1, lineHeight);
+      doc.text(t, margin, y);
+      y += lineHeight;
+    });
+  }
+  // Header separator line - matches `border-bottom: 2px solid #1a2744` in desktop
+  y += 5;
+  doc.setDrawColor(26, 39, 68);
+  doc.setLineWidth(1.5);
+  doc.line(margin, y, pageWidth - margin, y);
+  doc.setTextColor(0, 0, 0);
+  y += 8;
+
+  data.sections.forEach(section => {
+    if (section.type === 'spacer') {
+      if (section.pageBreak) {
+        doc.addPage();
+        y = margin;
+      } else {
+        const h = Math.max(0, Number(section.height) || 0);
+        if (h > 0) addSpacing(h * pxToPt);
+      }
+      return;
+    }
+    addSectionTitle(section.title);
+
+    if (section.type === 'summary') {
+      addWrappedText(section.text, scaled(9), 'normal');
+      addSpacing(4);
+      return;
+    }
+
+    if (section.type === 'skills') {
+      section.items.forEach(item => addBullet(item));
+      addSpacing(3);
+      return;
+    }
+
+    if (section.type === 'languages') {
+      addWrappedText(section.text, scaled(9), 'normal');
+      addSpacing(3);
+      return;
+    }
+
+    if (section.type === 'entries') {
+      section.entries.forEach(entry => {
+        addRoleLine(entry.role, entry.dates);
+        if (entry.company) addWrappedText(entry.company, scaled(9), 'normal');
+        if (entry.desc) addWrappedText(entry.desc, scaled(9), 'italic');
+        if (entry.bullets && entry.bullets.length) {
+          entry.bullets.forEach(b => addBullet(b));
+        }
+        addSpacing(3);
+      });
+    }
+  });
+
+  if (shareMode) {
+    const blob = doc.output('blob');
+    const file = new File([blob], exportFilename, { type: 'application/pdf' });
+    navigator.share({ files: [file], title: exportFilename })
+      .then(function() { showToast('\u2713 Shared successfully!', 'success'); })
+      .catch(function(e) {
+        if (e.name !== 'AbortError') {
+          showToast('Share failed. Try \'Export PDF\' to save the PDF first.', '');
+        }
+      });
+  } else {
+    doc.save(exportFilename);
+    showToast('Direct PDF downloaded.', 'success');
+  }
+}
+
+// ============ NATIVE PRINT-TO-PDF EXPORT ============
+// Builds a clean, semantic DOM snapshot for print and measurement
+function buildPrintContentClone() {
+  const original = document.getElementById('resumePage');
+  if (!original) return null;
+
+  const clone = original.cloneNode(true);
+
+  // Remove editor-only UI and controls
+  clone.querySelectorAll('.entry-controls,.add-bullet-btn,.bullet-delete,.drag-handle-section,.section-remove-btn,.page-number,.spacer-controls,.spacer-range,.spacer-bar,input[type="file"],#photoInput').forEach(el => el.remove());
+  clone.querySelectorAll('.hidden-section').forEach(el => el.remove());
+
+  // Remove editing attributes
+  clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+
+  // Remove placeholder elements
+  const ph = clone.querySelector('.r-photo-placeholder');
+  if (ph) ph.remove();
+
+  // Remove any inline styles so print CSS fully controls layout (except spacers which need data-height)
+  clone.querySelectorAll('[style]').forEach(el => {
+    if (!el.classList.contains('r-spacer')) {
+      el.removeAttribute('style');
+    }
+  });
+
+  // Ensure images are simple blocks with alt text
+  clone.querySelectorAll('img').forEach(img => {
+    if (!img.alt) img.alt = 'Profile photo';
+  });
+
+  return clone;
+}
+
+// Builds a clean, semantic HTML snapshot for print
+function buildPrintContentHtml() {
+  const clone = buildPrintContentClone();
+  if (!clone) return '';
+
+  return clone.outerHTML;
+}
+
+// Opens a clean window with minimal CSS and prints only the resume content
+function printResume(options) {
+  const opts = options || {};
+  const autoFallback = !!opts.autoFallback;
+
+  // Clean all text to remove Unicode issues
+  sanitizeAllText();
+  const exportFilename = getExportFilename();
+
+  const contentHtml = buildPrintContentHtml();
+  if (!contentHtml) {
+    showToast('Nothing to print.', '');
+    return;
+  }
+
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (isMobile) {
+      showToast('Popup blocked. In your browser settings, allow popups for this site, then tap the button again.', '');
+    } else {
+      showToast('Popup blocked. Allow popups for this site to export PDF.', '');
+    }
+    return false;
+  }
+
+  const docHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${exportFilename}</title>
+  <style>
+    @page {
+      margin: 0.5in;
+      size: A4;
+    }
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+      forced-color-adjust: none !important;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Calibri, Arial, sans-serif;
+      font-size: 11pt;
+      color: #2d3748;
+      line-height: 1.15;
+    }
+    #resumePage {
+      margin: 0;
+      padding: 0;
+    }
+    ${getPrintLayoutCss()}
+    ${isPageNumbersEnabled() ? `
+    @page {
+      @bottom-right {
+        content: 'Page ' counter(page) ' of ' counter(pages);
+        font-family: Calibri, Arial, sans-serif;
+        font-size: 8.5pt;
+        color: #718096;
+      }
+    }` : ''}
+    /* Hide file inputs in print window */
+    input[type="file"],
+    #photoInput,
+    [type="file"] {
+      display: none !important;
+      visibility: hidden !important;
+    }
+  </style>
+</head>
+<body>
+${contentHtml}
+</body>
+</html>`;
+
+  printWindow.document.open();
+  printWindow.document.write(docHtml);
+  printWindow.document.close();
+  try { printWindow.document.title = exportFilename; } catch(e) {}
+  printWindow.focus();
+
+  printWindow.onload = function() {
+    setTimeout(function() {
+      printWindow.print();
+      printWindow.close();
+    }, 100);
+  };
+
+  showToast('Print dialog opened. Set "Save as PDF" and margins to Default or None.', 'success');
+  return true;
+}
+
+function exportResume() {
+  // Primary path: print engine (closest to on-screen layout).
+  return printResume({ autoFallback: true });
+}
+
+// ============ LOCAL BACKUP AND ATS TEXT ============
+function downloadLocalFile(filename, content, mimeType) {
+  const url = URL.createObjectURL(new Blob([content], { type: mimeType }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function resumeFileBase() {
+  return getExportFilename().replace(/\.pdf$/i, '');
+}
+
+function renderAtsText(data) {
+  const lines = [data.header.name, data.header.title, ...data.header.contact, ''];
+  for (const section of data.sections) {
+    if (section.type === 'spacer') continue;
+    lines.push(section.title.toUpperCase());
+    if (section.type === 'summary' || section.type === 'languages') {
+      lines.push(section.text);
+    } else if (section.type === 'skills') {
+      lines.push(...section.items);
+    } else if (section.type === 'entries') {
+      for (const entry of section.entries) {
+        if (entry.role) lines.push(entry.role);
+        if (entry.company) lines.push(entry.company);
+        if (entry.dates) lines.push(entry.dates);
+        if (entry.desc) lines.push(entry.desc);
+        for (const bullet of entry.bullets) lines.push('- ' + bullet);
+        lines.push('');
+      }
+    }
+    lines.push('');
+  }
+  return lines.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
+}
+
+function downloadAtsText() {
+  const data = extractResumeData();
+  if (!data) return showToast('Could not read resume text.');
+  downloadLocalFile(resumeFileBase() + '_ATS.txt', renderAtsText(data), 'text/plain;charset=utf-8');
+  showToast('ATS text downloaded. Review its reading order before applying.', 'success');
+}
+
+function showAtsCheck() {
+  const data = extractResumeData();
+  if (!data) return showToast('Could not check resume text.');
+  const text = renderAtsText(data);
+  const issues = [];
+  if (!data.header.name.trim()) issues.push('Add a name.');
+  if (!/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(text)) issues.push('Add a valid email address.');
+  if (/\+?\d[\d\s()\-]{7,}/.test(text) === false || /Phone:[^\n]*X{2,}/i.test(text)) issues.push('Replace the masked phone number with a real contact number.');
+  const headings = data.sections.map(s => s.title.toLowerCase());
+  for (const heading of ['experience', 'skills', 'education']) {
+    if (!headings.some(h => h.includes(heading))) issues.push('Include a visible ' + heading + ' section.');
+  }
+  if (/\[(?:X|initiative|result|action|metric|stakeholders)\]|\bMon YYYY\b|\bJob Title\b/i.test(text)) {
+    issues.push('Replace template placeholders in the resume.');
+  }
+  const panel = document.getElementById('atsReport');
+  const body = document.getElementById('atsReportBody');
+  body.replaceChildren();
+  const summary = document.createElement('p');
+  summary.textContent = issues.length ? 'Items to fix before applying:' : 'No obvious text or section blockers found in the current resume.';
+  body.appendChild(summary);
+  if (issues.length) {
+    const list = document.createElement('ul');
+    for (const issue of issues) {
+      const item = document.createElement('li'); item.textContent = issue; list.appendChild(item);
+    }
+    body.appendChild(list);
+  }
+  const note = document.createElement('p');
+  note.textContent = 'This is a basic readability check, not an ATS score. The text export excludes the photo. Check the employer’s accepted file types.';
+  body.appendChild(note);
+  panel.hidden = false;
+}
+
+function downloadLocalBackup() {
+  clearTimeout(saveTimer);
+  const header = Array.from(document.querySelectorAll('.r-header-info [contenteditable="true"]'))
+    .map(el => el.textContent || '');
+  const backup = {
+    format: 'shruti-local-resume', version: 1,
+    header, body: document.getElementById('sectionsContainer').innerHTML,
+    visibility: Object.fromEntries(SECTIONS.map(s => [s.id, sectionVisibility[s.id] !== false])),
+    photo: getStoredPhoto(),
+    photoShape: document.getElementById('photoBox').classList.contains('circle-photo') ? 'circle' : 'square',
+    justify: document.getElementById('resumePage').classList.contains('text-justify'),
+    fontScale: Math.round(getFontScaleValue() * 100)
+  };
+  saveContent();
+  downloadLocalFile(resumeFileBase() + '_Editable_Backup.json', JSON.stringify(backup, null, 2), 'application/json;charset=utf-8');
+  showToast('Editable backup downloaded to this computer.', 'success');
+}
+
+function sanitizeBackupBody(markup) {
+  if (typeof markup !== 'string' || markup.length > 2000000) throw new Error('Invalid backup content');
+  const template = document.createElement('template');
+  template.innerHTML = markup;
+  const allowedTags = new Set(['DIV','SPAN','H2','P','UL','LI','BUTTON','INPUT','LABEL','BR','B','STRONG','I','EM']);
+  const allowedAttrs = new Set(['class','id','contenteditable','data-section','data-height','data-page-break','type','value','min','max','checked']);
+  for (const element of template.content.querySelectorAll('*')) {
+    if (!allowedTags.has(element.tagName)) throw new Error('Backup contains unsupported HTML');
+    for (const attr of Array.from(element.attributes)) {
+      if (!allowedAttrs.has(attr.name)) element.removeAttribute(attr.name);
+    }
+    if (element.hasAttribute('contenteditable')) element.setAttribute('contenteditable', 'true');
+    if (element.tagName === 'INPUT' && !['range','checkbox'].includes(element.getAttribute('type'))) {
+      throw new Error('Backup contains unsupported input');
+    }
+    if (element.classList.contains('r-spacer')) {
+      const height = Math.max(0, Math.min(80, Number(element.getAttribute('data-height')) || 20));
+      element.setAttribute('data-height', String(height));
+      element.style.setProperty('--spacer-height', height + 'px');
+    }
+  }
+  if (!template.content.querySelector('.r-section')) throw new Error('Backup has no resume sections');
+  return template.innerHTML;
+}
+
+async function loadLocalBackup(event) {
+  const input = event.target;
+  const file = input.files && input.files[0];
+  if (!file) return;
+  try {
+    if (file.size > 6000000) throw new Error('Backup is too large');
+    const backup = JSON.parse(await file.text());
+    if (backup.format !== 'shruti-local-resume' || backup.version !== 1 ||
+        !Array.isArray(backup.header) || backup.header.length !== 6) throw new Error('Unsupported backup file');
+    const safeBody = sanitizeBackupBody(backup.body);
+    const fields = document.querySelectorAll('.r-header-info [contenteditable="true"]');
+    fields.forEach((el, i) => { el.textContent = String(backup.header[i] || '').slice(0, 500); });
+    document.getElementById('sectionsContainer').innerHTML = safeBody;
+    stripInlineHandlers(document.getElementById('sectionsContainer'));
+    sectionVisibility = Object.fromEntries(SECTIONS.map(s => [s.id, backup.visibility?.[s.id] !== false]));
+    buildToggles(); applyVisibility(); initSortable(); rebindAll();
+    if (typeof backup.photo === 'string' && /^data:image\/(?:png|jpeg|webp);base64,/i.test(backup.photo) && backup.photo.length < 5000000) {
+      setPhotoFromDataUrl(backup.photo);
+    } else {
+      const photoBox = document.getElementById('photoBox');
+      photoBox.querySelector('img')?.remove();
+      photoBox.classList.remove('has-photo');
+      document.getElementById('photoPlaceholder').style.display = '';
+      try { localStorage.removeItem('resume_photo_shruti_local_v1'); } catch(e) {}
+      try { sessionStorage.removeItem('resume_photo_shruti_local_v1'); } catch(e) {}
+    }
+    setPhotoShape(backup.photoShape === 'circle' ? 'circle' : 'square');
+    toggleTextAlignment(backup.justify === true);
+    setFontScale(backup.fontScale || 100, { silent: true });
+    saveContent();
+    showToast('Editable backup loaded.', 'success');
+  } catch (error) {
+    showToast('Could not load backup: ' + error.message);
+  } finally {
+    input.value = '';
+  }
+}
+
+// ============ TOAST ============
+function showToast(msg, type = '') {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.className = 'toast' + (type === 'success' ? ' success' : '');
+  void toast.offsetWidth;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 5000);
+}
+</script>
+</body>
+</html>
