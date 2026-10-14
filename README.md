@@ -6,7 +6,8 @@ A locally editable resume builder. Open the [hosted editor](https://ashwinbhajan
 
 - Click resume text to edit it. Changes are saved in that browser when local storage is available.
 - Use **Save editable backup** to download a JSON copy. Use **Load backup** to restore it later or in another browser.
-- **Download PDF** creates a two-page, selectable-text PDF from the current visible resume. Review the file before submitting it.
+- **Download PDF** creates a selectable-text PDF and includes an uploaded profile photo in its selected square or circle shape.
+- **Download ATS PDF** creates the same text-only resume without the photo for applications where images may confuse parsing.
 - **Download ATS text** shows the reading order and excludes the photo.
 - **ATS check** flags obvious missing contact details, hidden core sections, and template placeholders. It is a basic readability check, not an ATS score.
 
